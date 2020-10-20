@@ -8,7 +8,7 @@ ready(() => {
     const startButton = document.getElementById('startButton');
     const answerButton = document.getElementById('answerButton');
     // const cancelButton = document.getElementById('cancelButton');
-    // const closeButton = document.getElementById('closeButton');
+    const closeButton = document.getElementById('closeButton');
     const customPeerIdControl = document.getElementById('peerId');
     const otherPeerIdControl = document.getElementById('otherPeerId');
     const videoLocal = document.getElementById('video-local');
@@ -56,6 +56,11 @@ ready(() => {
         callAnswer();
     });
 
+    closeButton.addEventListener('click', () => {
+        peer.destroy();
+        close.classList.add('hidden');
+    });
+
     function callToNode(peerId) {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
             .then(function (mediaStream) {
@@ -91,6 +96,7 @@ ready(() => {
                 peercall.answer(mediaStream); // отвечаем на звонок и передаем свой медиапоток собеседнику
                 //peercall.on ('close', onCallClose); //можно обработать закрытие-обрыв звонка
                 videoLocal.srcObject = mediaStream; //помещаем собственный медиапоток в объект видео (чтоб видеть себя)
+                incomming.classList.add('hidden');
                 close.classList.remove('hidden'); //информируем, что звонок начат, и выводим кнопку Завершить
                 video.onloadedmetadata = function (e) {
                     //запускаем воспроизведение, когда объект загружен
