@@ -35,29 +35,56 @@ ready(() => {
     };
 
     startButton.addEventListener('click', () => {
-        const myId = customPeerIdControl.value;
-        initPeer(myId);
-    });
+        const id = customPeerIdControl.value;
+        const otherId = otherPeerIdControl.value;
 
-    answerButton.addEventListener('click', () => {
-        callAnswer();
-    });
-
-    let initPeer = function(id) {
         peer = new Peer(id, { config: callOptions });
+
         peer.on("open", function (peerID) {
             document.getElementById("myId").innerHTML = peerID;
+            callToNode(otherId);
         });
         peer.on("call", function (call) {
             // Answer the call, providing our mediaStream
             peercall = call;
             incomming.classList.remove('hidden');
         });
-        const otherId = otherPeerIdControl.value;
-        callToNode(otherId);
+
+    });
+
+    answerButton.addEventListener('click', () => {
+        callAnswer();
+    });
+
+    function callToNode(peerId) {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+            .then(function (mediaStream) {
+                incomming.classList.remove('hidden');
+
+                peercall = peer.call(peerId, mediaStream);
+                alert(peercall);
+                peercall.on("stream", function (stream) {
+                    //нам ответили, получим стрим
+                    setTimeout(function () {
+                        videoRemote.srcObject = peercall.remoteStream;
+                        videoRemote.onloadedmetadata = function (e) {
+                            videoRemote.play();
+                        };
+                    }, 1500);
+                });
+                //  peercall.on('close', onCallClose);
+                videoLocal.srcObject = mediaStream;
+                videoLocal.onloadedmetadata = function (e) {
+                    videoLocal.play();
+                };
+            })
+            .catch(function (err) {
+                alert(err);
+                console.log(err.name + ": " + err.message);
+            });
     }
 
-    let callAnswer = function() {
+    function callAnswer() {
         navigator.mediaDevices
             .getUserMedia({ audio: true, video: true })
             .then(function (mediaStream) {
@@ -79,32 +106,6 @@ ready(() => {
                 }, 1500);
             })
             .catch(function (err) {
-                console.log(err.name + ": " + err.message);
-            });
-    }
-    let callToNode = function(peerId) {
-        //вызов
-        navigator.mediaDevices
-            .getUserMedia({ audio: true, video: true })
-            .then(function (mediaStream) {
-                peercall = peer.call(peerId, mediaStream);
-                peercall.on("stream", function (stream) {
-                    //нам ответили, получим стрим
-                    setTimeout(function () {
-                        videoRemote.srcObject = peercall.remoteStream;
-                        videoRemote.onloadedmetadata = function (e) {
-                            videoRemote.play();
-                        };
-                    }, 1500);
-                });
-                //  peercall.on('close', onCallClose);
-                videoLocal.srcObject = mediaStream;
-                videoLocal.onloadedmetadata = function (e) {
-                    videoLocal.play();
-                };
-            })
-            .catch(function (err) {
-                alert(err);
                 console.log(err.name + ": " + err.message);
             });
     }
