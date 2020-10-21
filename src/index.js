@@ -16,6 +16,8 @@ ready(() => {
     const incomming = document.getElementById('incomming');
     const close = document.getElementById('close');
 
+    callButton.disabled = true;
+
     let peer;
     let peercall;
 
@@ -35,9 +37,13 @@ ready(() => {
     };
 
     startButton.addEventListener('click', () => {
+        startButton.disabled = true;
+        callButton.disabled = false;
+
         const id = customPeerIdControl.value;
 
         peer = new Peer(id, { config: callOptions });
+        console.log(peer);
 
         peer.on("call", function (call) {
             // Answer the call, providing our mediaStream

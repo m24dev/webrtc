@@ -651,6 +651,8 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
     const incomming = document.getElementById('incomming');
     const close = document.getElementById('close');
 
+    callButton.disabled = true;
+
     let peer;
     let peercall;
 
@@ -670,9 +672,13 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
     };
 
     startButton.addEventListener('click', () => {
+        startButton.disabled = true;
+        callButton.disabled = false;
+
         const id = customPeerIdControl.value;
 
         peer = new (peerjs__WEBPACK_IMPORTED_MODULE_1___default())(id, { config: callOptions });
+        console.log(peer);
 
         peer.on("call", function (call) {
             // Answer the call, providing our mediaStream
