@@ -705,6 +705,7 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
     closeButton.addEventListener('click', () => {
         peer.destroy();
         close.classList.add('hidden');
+        closed.classList.remove('hidden');
     });
 
     function makeCall(peerId) {
