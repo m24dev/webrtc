@@ -15,6 +15,7 @@ ready(() => {
     const videoRemote = document.getElementById('video-remote');
     const incomming = document.getElementById('incomming');
     const close = document.getElementById('close');
+    const disconnected = document.getElementById('disconnected');
 
     callButton.disabled = true;
 
@@ -43,14 +44,17 @@ ready(() => {
         const id = customPeerIdControl.value;
 
         peer = new Peer(id, { config: callOptions });
-        console.log(peer);
 
         peer.on("call", function (call) {
-            console.log('calling');
-            console.log(call);
             // Answer the call, providing our mediaStream
             peercall = call;
             incomming.classList.remove('hidden');
+        });
+
+        peer.on("disconnected", function (call) {
+            incomming.classList.add('hidden');
+            close.classList.add('hidden');
+            disconnected.classList.remove('hidden');
         });
     });
 
