@@ -15,7 +15,7 @@ ready(() => {
     const videoRemote = document.getElementById('video-remote');
     const incomming = document.getElementById('incomming');
     const close = document.getElementById('close');
-    const disconnected = document.getElementById('disconnected');
+    const closed = document.getElementById('closed');
 
     callButton.disabled = true;
 
@@ -51,10 +51,10 @@ ready(() => {
             incomming.classList.remove('hidden');
         });
 
-        peer.on("disconnected", function (call) {
+        peer.on("close", function (call) {
             incomming.classList.add('hidden');
             close.classList.add('hidden');
-            disconnected.classList.remove('hidden');
+            closed.classList.remove('hidden');
         });
     });
 
