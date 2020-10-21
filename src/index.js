@@ -38,7 +38,6 @@ ready(() => {
     };
 
     startButton.addEventListener('click', () => {
-        alert('start');
         startButton.disabled = true;
         callButton.disabled = false;
 
@@ -50,9 +49,11 @@ ready(() => {
             // Answer the call, providing our mediaStream
             peercall = call;
             incomming.classList.remove('hidden');
+            closed.classList.add('hidden');
         });
 
-        peer.on("close", function () {
+        peer.on("disconnected", function () {
+            alert('disconnected');
             peer.destroy();
             incomming.classList.add('hidden');
             close.classList.add('hidden');
@@ -61,6 +62,7 @@ ready(() => {
     });
 
     callButton.addEventListener('click', () => {
+        closed.classList.add('hidden');
         const otherId = otherPeerIdControl.value;
         makeCall(otherId);
     });
@@ -70,9 +72,7 @@ ready(() => {
     });
 
     closeButton.addEventListener('click', () => {
-        peer.destroy();
-        close.classList.add('hidden');
-        closed.classList.remove('hidden');
+        peer.disconnect();
     });
 
     function makeCall(peerId) {
