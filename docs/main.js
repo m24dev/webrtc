@@ -687,10 +687,10 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
         });
 
         peer.on("close", function () {
+            peer.destroy();
             incomming.classList.add('hidden');
             close.classList.add('hidden');
             closed.classList.remove('hidden');
-            peer.destroy();
         });
     });
 

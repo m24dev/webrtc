@@ -52,10 +52,10 @@ ready(() => {
         });
 
         peer.on("close", function () {
+            peer.destroy();
             incomming.classList.add('hidden');
             close.classList.add('hidden');
             closed.classList.remove('hidden');
-            peer.destroy();
         });
     });
 
