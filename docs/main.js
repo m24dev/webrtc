@@ -709,7 +709,7 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
                 peercall = peer.call(peerId, mediaStream);
                 peercall.on("stream", function (stream) {
                     //нам ответили, получим стрим
-                    incomming.classList.add('hidden');
+                    incomming.classList.remove('hidden');
                     setTimeout(function () {
                         videoRemote.srcObject = peercall.remoteStream;
                         videoRemote.onloadedmetadata = function (e) {
