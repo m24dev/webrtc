@@ -673,6 +673,7 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
     };
 
     startButton.addEventListener('click', () => {
+        alert('start');
         startButton.disabled = true;
         callButton.disabled = false;
 

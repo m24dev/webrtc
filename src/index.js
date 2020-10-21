@@ -38,6 +38,7 @@ ready(() => {
     };
 
     startButton.addEventListener('click', () => {
+        alert('start');
         startButton.disabled = true;
         callButton.disabled = false;
 
