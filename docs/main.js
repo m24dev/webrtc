@@ -686,10 +686,11 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
             incomming.classList.remove('hidden');
         });
 
-        peer.on("close", function (call) {
+        peer.on("close", function () {
             incomming.classList.add('hidden');
             close.classList.add('hidden');
             closed.classList.remove('hidden');
+            peer.destroy();
         });
     });
 
