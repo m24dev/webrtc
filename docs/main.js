@@ -681,6 +681,8 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
         console.log(peer);
 
         peer.on("call", function (call) {
+            console.log('calling');
+            console.log(call);
             // Answer the call, providing our mediaStream
             peercall = call;
             incomming.classList.remove('hidden');
@@ -704,8 +706,6 @@ domready__WEBPACK_IMPORTED_MODULE_0___default()(() => {
     function makeCall(peerId) {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
             .then(function (mediaStream) {
-                incomming.classList.remove('hidden');
-
                 peercall = peer.call(peerId, mediaStream);
                 peercall.on("stream", function (stream) {
                     //нам ответили, получим стрим
