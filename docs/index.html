@@ -1,1 +1,34 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>Webpack App</title></head><body><div class="container"><video id="video-local" playsinline autoplay muted></video><video id="video-remote" playsinline autoplay></video><div class="form-group"><div class="form-group"><input placeholder="Мой ID" id="peerId"> <button id="startButton">Создать ID</button></div><div class="from-group"><input placeholder="Чужой ID" id="otherPeerId"> <button id="callButton">Позвонить</button></div><div id="incomming" class="hidden">Входящий звонок: <button id="answerButton">Принять</button></div><div id="close" class="hidden">Звонок начат... <button id="closeButton">Завершить звонок</button></div></div></div><script src="main.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Webpack App</title>
+</head>
+<body>
+    <div class="container">
+        <video id="video-local" playsinline autoplay muted></video>
+        <video id="video-remote" playsinline autoplay></video>
+        <div class="form-group">
+            <div class="form-group">
+                <input placeholder="Мой ID" type="text" id="peerId">
+                <button id="startButton">Создать ID</button>
+            </div>
+            <div class="from-group">
+                <input placeholder="Чужой ID" type="text" id="otherPeerId">
+                <button id="callButton">Позвонить</button>
+            </div>
+            <div id="incomming" class="hidden">
+                Входящий звонок:
+                <button id="answerButton">Принять</button>
+                <!-- <button id="cancelButton">Отклонить</button> -->
+            </div>
+            <div id="close" class="hidden">
+                Звонок начат...
+                <button id="closeButton">Завершить</button>
+            </div>
+        </div>
+    </div>
+<script src="main.js"></script></body>
+</html>
