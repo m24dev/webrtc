@@ -74,6 +74,7 @@ ready(() => {
                 peercall = peer.call(peerId, mediaStream);
                 peercall.on("stream", function (stream) {
                     //нам ответили, получим стрим
+                    incomming.classList.add('hidden');
                     setTimeout(function () {
                         videoRemote.srcObject = peercall.remoteStream;
                         videoRemote.onloadedmetadata = function (e) {
