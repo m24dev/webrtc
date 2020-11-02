@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "domready": "./domready.js",
+    "peerjs": "./peerjs.js",
+    "svelte": "./svelte.js",
+    "svelte/internal": "./svelte/internal.js"
+  }
+}

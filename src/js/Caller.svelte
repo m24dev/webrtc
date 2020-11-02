@@ -2,19 +2,18 @@
     import Peer from 'peerjs';
     const remoteId = 'm24webrtc';
     const callOptions = {
-        host: "192.168.1.113",
+        host: "194.67.116.195",
         port: 9000,
-        path: '/peerjs',
+        path: '/myapp',
         debug: 3,
-        secure: true,
         config: {
-            'iceServers': [
-		        {
+            iceServers: [
+                {
                     url: 'stun:194.67.116.195:3479',		
-		            username: "test",
+                    username: "test",
                     credential: "test"
                 },
-		        {
+                {
                     url: "turn:194.67.116.195:3478",
                     username: "test",
                     credential: "test"
@@ -26,38 +25,28 @@
     let isCallStarted = false;
     let isDisconnected = false;
     let video;
+    let peercall;
     
-    let peer = new Peer(callOptions);
-
-    peer.on('open', () => {
-        alert('Connection opened');
-    });
-
-    peer.on('close', () => {
-        alert('Connection closed');
-    });
-
-    peer.on('disconnected', () => {
-        alert('Disconnected');
-    });
+    const peer = new Peer(callOptions);
 
     peer.on('error', (err) => {
-        alert(err);
+        console.log(err);
     });
 
     function makeCall() {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-            .then(function (mediaStream) {
-                let peercall = peer.call(remoteId, mediaStream);
+            .then(function(mediaStream) {
+                peercall = peer.call(remoteId, mediaStream);
                 
                 isCallStarted = true;
+                isDisconnected = false;
 
                 peercall.on('close', onCallClose);
 
-                video.srcObject = mediaStream;
-                video.onloadedmetadata = function () {
+                video.onloadedmetadata = function(e) {
                     video.play();
                 };
+                video.srcObject = mediaStream;
             })
             .catch(function (err) {
                 alert(err);
@@ -66,10 +55,11 @@
     }
 
     function onCallClose() {
-        alert(555);
-        peer.destroy();
         isCallStarted = false;
         isDisconnected = true;
+    }
+    function handleCloseClick() {
+        peercall.close();
     }
 </script>
 
@@ -77,7 +67,7 @@
 {#if isCallStarted}
     <div class="form-group">
         Звонок начат...
-        <button on:click={peer.disconnect()}>Завершить</button>
+        <button on:click={handleCloseClick}>Завершить</button>
     </div>
 {:else}
     <div class="form-group">
