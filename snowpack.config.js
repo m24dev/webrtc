@@ -22,7 +22,9 @@ module.exports = {
       /* ... */
     },
     buildOptions: {
-      out: 'docs'
+      out: 'docs',
+      baseUrl: 'https://m24dev.github.io/webrtc/',
+      clean: true
     },
     proxy: {
       /* ... */
