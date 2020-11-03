@@ -2,7 +2,7 @@
     import Peer from 'peerjs';
     const remoteId = 'm24webrtc';
     const callOptions = {
-        host: "https://e99d0d498e2b.ngrok.io",
+        host: "e99d0d498e2b.ngrok.io",
         port: 443,
         path: '/myapp',
         debug: 3,
