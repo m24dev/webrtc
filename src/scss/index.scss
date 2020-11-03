@@ -11,6 +11,14 @@ body {
     margin: auto;
 }
 
+.users {
+    display: flex;
+    justify-content: center;
+    &__item {
+        width: 300px;
+        margin: 0 10px;
+    }
+}
 video {
     margin: 0 0 20px;
     --width: 30%;

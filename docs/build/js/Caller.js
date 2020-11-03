@@ -183,7 +183,7 @@ const remoteId = "m24webrtc";
 
 function instance($$self, $$props, $$invalidate) {
 	const callOptions = {
-		host: "e99d0d498e2b.ngrok.io",
+		host: "670b4dac6fd8.ngrok.io",
 		port: 443,
 		path: "/myapp",
 		debug: 3,

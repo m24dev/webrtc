@@ -33,15 +33,17 @@
 
 </script>
 
-<video playsinline autoplay muted bind:this={video}></video>
-{#if isCallStarted}
-    <div class="form-group">
-        Звонок начат...
-        <button on:click={handleCloseClick}>Завершить</button>
-    </div>
-{/if}
-{#if isDisconnected}
-    <div class="form-group">
-        Соединение разорвано.
-    </div>
-{/if}
+<div class="users__item">
+    <video playsinline autoplay muted bind:this={video}></video>
+    {#if isCallStarted}
+        <div class="form-group">
+            Звонок начат...
+            <button on:click={handleCloseClick}>Завершить</button>
+        </div>
+    {/if}
+    {#if isDisconnected}
+        <div class="form-group">
+            Соединение разорвано.
+        </div>
+    {/if}
+</div>

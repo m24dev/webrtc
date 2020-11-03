@@ -6,7 +6,6 @@ import {
 	binding_callbacks,
 	detach,
 	element,
-	empty,
 	init,
 	insert,
 	listen,
@@ -28,7 +27,7 @@ function create_if_block_1(ctx) {
 	return {
 		c() {
 			div = element("div");
-			t0 = text("Звонок начат...\r\n        ");
+			t0 = text("Звонок начат...\r\n            ");
 			button = element("button");
 			button.textContent = "Завершить";
 			attr(div, "class", "form-group");
@@ -52,7 +51,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (43:0) {#if isDisconnected}
+// (44:4) {#if isDisconnected}
 function create_if_block(ctx) {
 	let div;
 
@@ -72,33 +71,34 @@ function create_if_block(ctx) {
 }
 
 function create_fragment(ctx) {
+	let div;
 	let video_1;
 	let t0;
 	let t1;
-	let if_block1_anchor;
 	let if_block0 = /*isCallStarted*/ ctx[0] && create_if_block_1(ctx);
 	let if_block1 = /*isDisconnected*/ ctx[1] && create_if_block(ctx);
 
 	return {
 		c() {
+			div = element("div");
 			video_1 = element("video");
 			t0 = space();
 			if (if_block0) if_block0.c();
 			t1 = space();
 			if (if_block1) if_block1.c();
-			if_block1_anchor = empty();
 			video_1.playsInline = true;
 			video_1.autoplay = true;
 			video_1.muted = true;
+			attr(div, "class", "users__item");
 		},
 		m(target, anchor) {
-			insert(target, video_1, anchor);
+			insert(target, div, anchor);
+			append(div, video_1);
 			/*video_1_binding*/ ctx[5](video_1);
-			insert(target, t0, anchor);
-			if (if_block0) if_block0.m(target, anchor);
-			insert(target, t1, anchor);
-			if (if_block1) if_block1.m(target, anchor);
-			insert(target, if_block1_anchor, anchor);
+			append(div, t0);
+			if (if_block0) if_block0.m(div, null);
+			append(div, t1);
+			if (if_block1) if_block1.m(div, null);
 		},
 		p(ctx, [dirty]) {
 			if (/*isCallStarted*/ ctx[0]) {
@@ -107,7 +107,7 @@ function create_fragment(ctx) {
 				} else {
 					if_block0 = create_if_block_1(ctx);
 					if_block0.c();
-					if_block0.m(t1.parentNode, t1);
+					if_block0.m(div, t1);
 				}
 			} else if (if_block0) {
 				if_block0.d(1);
@@ -120,7 +120,7 @@ function create_fragment(ctx) {
 				} else {
 					if_block1 = create_if_block(ctx);
 					if_block1.c();
-					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+					if_block1.m(div, null);
 				}
 			} else if (if_block1) {
 				if_block1.d(1);
@@ -130,13 +130,10 @@ function create_fragment(ctx) {
 		i: noop,
 		o: noop,
 		d(detaching) {
-			if (detaching) detach(video_1);
+			if (detaching) detach(div);
 			/*video_1_binding*/ ctx[5](null);
-			if (detaching) detach(t0);
-			if (if_block0) if_block0.d(detaching);
-			if (detaching) detach(t1);
-			if (if_block1) if_block1.d(detaching);
-			if (detaching) detach(if_block1_anchor);
+			if (if_block0) if_block0.d();
+			if (if_block1) if_block1.d();
 		}
 	};
 }

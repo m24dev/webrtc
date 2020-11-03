@@ -4,7 +4,7 @@
 
     const id = 'm24webrtc';
     const callOptions = {
-        host: "e99d0d498e2b.ngrok.io",
+        host: '670b4dac6fd8.ngrok.io',
         port: 443,
         path: '/myapp',
         debug: 3,
@@ -34,6 +34,8 @@
 </script>
 
 <p>Мой id: {id}</p>
-{#each connections as connection}
-    <Stream connection={connection} />
-{/each}
+<div class="users">
+    {#each connections as connection}
+        <Stream connection={connection} />
+    {/each}
+</div>
