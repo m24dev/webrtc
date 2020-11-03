@@ -15,13 +15,10 @@ body {
     display: flex;
     justify-content: center;
     &__item {
-        width: 100%;
-        max-width: 500px;
+        width: 300px;
         margin: 0 10px;
         video {
-            --width: 100%;
-            width: var(--width);
-            height: calc(var(--width) * 0.75);
+            width: 100%;
             height: auto;
             margin: 0 0 20px;
             background: grey;
