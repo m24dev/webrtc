@@ -10,7 +10,8 @@ module.exports = {
         '@snowpack/plugin-run-script',
         {cmd: 'svelte-check --output human', watch: '$1 --watch', output: 'stream'},
       ],
-      "@snowpack/plugin-sass"
+      '@snowpack/plugin-sass',
+      '@snowpack/plugin-webpack'
     ],
     install: [
       /* ... */
@@ -23,7 +24,6 @@ module.exports = {
     },
     buildOptions: {
       out: 'docs',
-      baseUrl: 'https://m24dev.github.io/webrtc/',
       clean: true
     },
     proxy: {
