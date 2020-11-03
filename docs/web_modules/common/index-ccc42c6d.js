@@ -42,9 +42,6 @@ function text(data) {
 function space() {
     return text(' ');
 }
-function empty() {
-    return text('');
-}
 function listen(node, event, handler, options) {
     node.addEventListener(event, handler, options);
     return () => node.removeEventListener(event, handler, options);
@@ -294,4 +291,4 @@ class SvelteComponent {
     }
 }
 
-export { SvelteComponent as S, append as a, attr as b, binding_callbacks as c, detach as d, element as e, empty as f, insert as g, space as h, init as i, check_outros as j, create_component as k, listen as l, destroy_component as m, noop as n, onMount as o, destroy_each as p, group_outros as q, mount_component as r, safe_not_equal as s, text as t, transition_in as u, transition_out as v };
+export { SvelteComponent as S, append as a, attr as b, binding_callbacks as c, detach as d, element as e, insert as f, space as g, check_outros as h, init as i, create_component as j, destroy_component as k, listen as l, destroy_each as m, noop as n, onMount as o, group_outros as p, mount_component as q, transition_in as r, safe_not_equal as s, text as t, transition_out as u };
