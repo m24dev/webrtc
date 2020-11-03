@@ -1,4 +1,3 @@
 node_modules
-dist
 snowpack.cert
 snowpack.key

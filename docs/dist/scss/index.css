@@ -1,0 +1,24 @@
+body {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+video {
+  margin: 0 0 20px;
+  --width: 30%;
+  width: var(--width);
+  height: calc(var(--width) * 0.75);
+  background: grey;
+}
+
+.form-group {
+  margin: 0 0 20px;
+}
