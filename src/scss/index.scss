@@ -15,16 +15,18 @@ body {
     display: flex;
     justify-content: center;
     &__item {
-        width: 300px;
+        width: 100%;
+        max-width: 500px;
         margin: 0 10px;
+        video {
+            --width: 100%;
+            width: var(--width);
+            height: calc(var(--width) * 0.75);
+            height: auto;
+            margin: 0 0 20px;
+            background: grey;
+        }
     }
-}
-video {
-    margin: 0 0 20px;
-    --width: 30%;
-    width: var(--width);
-    height: calc(var(--width) * 0.75);
-    background: grey;
 }
 
 .form-group {

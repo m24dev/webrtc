@@ -16,15 +16,16 @@ body {
   justify-content: center;
 }
 .users__item {
-  width: 300px;
+  width: 100%;
+  max-width: 500px;
   margin: 0 10px;
 }
-
-video {
-  margin: 0 0 20px;
-  --width: 30%;
+.users__item video {
+  --width: 100%;
   width: var(--width);
   height: calc(var(--width) * 0.75);
+  height: auto;
+  margin: 0 0 20px;
   background: grey;
 }
 
