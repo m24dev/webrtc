@@ -1,31 +1,29 @@
-body {
-    text-align: center;
-}
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+// Optional
+@import "../../node_modules/bootstrap/scss/reboot";
+@import "../../node_modules/bootstrap/scss/type";
+@import "../../node_modules/bootstrap/scss/grid";
+@import "../../node_modules/bootstrap/scss/buttons";
+@import "../../node_modules/bootstrap/scss/button-group";
+@import "../../node_modules/bootstrap/scss/forms";
+@import "../../node_modules/bootstrap/scss/custom-forms";
+@import "../../node_modules/bootstrap/scss/input-group";
+@import "../../node_modules/bootstrap/scss/card";
+@import "../../node_modules/bootstrap/scss/transitions";
+@import "../../node_modules/bootstrap/scss/utilities";
 
 .hidden {
     display: none;
 }
 
-.container {
-    max-width: 1200px;
-    margin: auto;
+.btn {
+    line-height: 1;
 }
 
-.users {
-    display: flex;
-    justify-content: center;
-    &__item {
-        width: 300px;
-        margin: 0 10px;
-        video {
-            width: 100%;
-            height: auto;
-            margin: 0 0 20px;
-            background: grey;
-        }
-    }
-}
-
-.form-group {
-    margin: 0 0 20px;
+.btn-icon {
+    width: 50px;
+    height: 50px;
+    padding: 0;
 }

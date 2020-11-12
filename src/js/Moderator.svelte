@@ -1,41 +1,58 @@
+<style type="text/scss">
+    .connections {
+        display: flex;
+        justify-content: center;
+    }
+</style>
 <script>
     import Peer from 'peerjs';
-    import Stream from './Stream.svelte';
+    import Connection from './Connection.svelte';
+    import settings from './settings';
 
-    const id = 'm24webrtc';
-    const callOptions = {
-        host: '670b4dac6fd8.ngrok.io',
-        port: 443,
-        path: '/myapp',
-        debug: 3,
-        config: {
-            iceServers: [
-                {
-                    url: 'stun:194.67.116.195:3479',		
-                    username: "test",
-                    credential: "test"
-                },
-                {
-                    url: "turn:194.67.116.195:3478",
-                    username: "test",
-                    credential: "test"
-                }
-            ]
-        }
-    };
+    const peer = new Peer(settings.moderatorId, settings.callOptions);
 
-    let peer = new Peer(id, callOptions);
+    let isPeerReady = false;
     let connections = [];
+    let username = 'Босс';
 
-    peer.on('call', function(call) {
-        call.answer();
-        connections = [...connections, call];
+    function onConneсtionClose() {
+        
+    }
+
+    peer.on('connection', function (connection) {
+        console.log('connection');
+        connections = [...connections, {
+            dataConnection: connection,
+            peer: connection.peer
+        }];
+    });
+
+    peer.on('call', function(mediaConnection) {
+        console.log('call');
+        mediaConnection.answer();
+        connections = connections.map(connection => {
+            if (connection.peer === mediaConnection.peer) {
+                return {...connection, mediaConnection: mediaConnection};
+            }
+            return connection;
+        });
+    });
+
+    peer.on('open', function(id){
+        console.log('open');
+        isPeerReady = true;
+    });
+    peer.on('error', function(err){
+        console.error(err);
     });
 </script>
 
-<p>Мой id: {id}</p>
-<div class="users">
-    {#each connections as connection}
-        <Stream connection={connection} />
-    {/each}
-</div>
+{#if isPeerReady}
+    <div class="connections">
+        {#each connections as connection}
+            {#if connection.dataConnection && connection.mediaConnection}
+                <Connection username={username} dataConnection={connection.dataConnection} mediaConnection={connection.mediaConnection} on:close={onConneсtionClose} />
+            {/if}
+        {/each}
+    </div>
+{/if}

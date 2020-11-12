@@ -1,85 +1,81 @@
+<style type="text/scss">
+    .user :global(.connection) {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+    }
+    .user {
+        position: fixed;
+        left: 0; 
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .btn-start {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
+</style>
+
 <script>
+    import { fade } from 'svelte/transition';
     import Peer from 'peerjs';
-    const remoteId = 'm24webrtc';
-    const callOptions = {
-        host: '670b4dac6fd8.ngrok.io',
-        port: 443,
-        path: '/myapp',
-        debug: 3,
-        config: {
-            iceServers: [
-                {
-                    url: 'stun:194.67.116.195:3479',		
-                    username: "test",
-                    credential: "test"
-                },
-                {
-                    url: "turn:194.67.116.195:3478",
-                    username: "test",
-                    credential: "test"
-                }
-            ]
-        }
-    };
+    import Connection from './Connection.svelte';
+    import settings from './settings';
 
-    let isCallStarted = false;
-    let isDisconnected = false;
-    let video;
-    let peercall;
+    const peer = new Peer(settings.callOptions);
+
+    let isPeerReady = false;
+    let isDataConnectionStarted = false;
+    let isMediaConnectionStarted = false;
+    let dataConnection;
+    let mediaConnection;
+    let username = 'Вася';
     
-    const peer = new Peer(callOptions);
+    function makeConnection() {
+        dataConnection = peer.connect(settings.moderatorId, {
+            metadata: {
+                username: username
+            }
+        });
 
-    peer.on('error', (err) => {
-        console.log(err);
-    });
+        isDataConnectionStarted = true;
 
-    function makeCall() {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
             .then(function(mediaStream) {
-                peercall = peer.call(remoteId, mediaStream);
-                
-                isCallStarted = true;
-                isDisconnected = false;
-
-                peercall.on('close', onCallClose);
-
-                video.onloadedmetadata = function(e) {
-                    video.play();
-                };
-                video.srcObject = mediaStream;
+                mediaConnection = peer.call(settings.moderatorId, mediaStream);
+                isMediaConnectionStarted = true;
             })
             .catch(function (err) {
-                alert(err);
-                console.log(err.name + ": " + err.message);
+                alert.log(err.name + ": " + err.message);
             });
     }
 
-    function onCallClose() {
-        isCallStarted = false;
-        isDisconnected = true;
+    function onConneсtionClose() {
+        isDataConnectionStarted = false;
+        isMediaConnectionStarted = false;
     }
-    function handleCloseClick() {
-        peercall.close();
-    }
+
+    peer.on('open', function(id){
+        isPeerReady = true;
+    });
+    peer.on('error', function(err){
+        console.error(err);
+    });
 </script>
 
-<div class="users">
-    <div class="users__item">
-        <video playsinline autoplay muted bind:this={video}></video>
-        {#if isCallStarted}
-            <div class="form-group">
-                Звонок начат...
-                <button on:click={handleCloseClick}>Завершить</button>
-            </div>
+<div class="user bg-dark">
+    {#if isPeerReady}
+        {#if !(isDataConnectionStarted && isMediaConnectionStarted)}
+            <button type="button" class="btn btn-primary btn-start shadow-sm" transition:fade on:click={makeConnection}>Начать</button>
         {:else}
-            <div class="form-group">
-                <button on:click={makeCall}>Позвонить</button>
-            </div>
+            <Connection username={username} dataConnection={dataConnection} mediaConnection={mediaConnection} on:close={onConneсtionClose} />
         {/if}
-        {#if isDisconnected}
-            <div class="form-group">
-                Соединение разорвано.
-            </div>
-        {/if}
-    </div>
+    {/if}
 </div>

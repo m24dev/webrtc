@@ -70,6 +70,7 @@ var e=this&&this.__extends||function(){var e=function(t,n){return (e=Object.setP
 },{"eventemitter3":"JJlS","./util":"BHXf","./logger":"WOs9","./socket":"wJlv","./mediaconnection":"dbHP","./dataconnection":"GBTQ","./enums":"ZRYf","./api":"in7L"}],"iTK6":[function(require,module,exports) {
 Object.defineProperty(exports,"__esModule",{value:!0});var e=require("./util"),r=require("./peer");exports.peerjs={Peer:r.Peer,util:e.util},exports.default=r.Peer,window.peerjs=exports.peerjs,window.Peer=r.Peer;
 },{"./util":"BHXf","./peer":"Hxpd"}]},{},["iTK6"]);
+
 });
 
 var __pika_web_default_export_for_treeshaking__ = /*@__PURE__*/getDefaultExportFromCjs(peerjs_min);
