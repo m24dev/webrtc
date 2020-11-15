@@ -190,6 +190,9 @@ function get_current_component() {
 function onMount(fn) {
     get_current_component().$$.on_mount.push(fn);
 }
+function afterUpdate(fn) {
+    get_current_component().$$.after_update.push(fn);
+}
 function createEventDispatcher() {
     const component = get_current_component();
     return (type, detail) => {
@@ -547,4 +550,4 @@ class SvelteComponent {
     }
 }
 
-export { space as A, svg_element as B, text as C, toggle_class as D, xlink_attr as E, identity as F, SvelteComponent as S, add_render_callback as a, attr as b, createEventDispatcher as c, check_outros as d, create_bidirectional_transition as e, create_component as f, destroy_component as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, listen as n, onMount as o, mount_component as p, noop as q, transition_out as r, safe_not_equal as s, transition_in as t, append as u, binding_callbacks as v, destroy_each as w, run_all as x, set_data as y, set_input_value as z };
+export { xlink_attr as A, create_component as B, destroy_component as C, empty as D, mount_component as E, noop as F, identity as G, SvelteComponent as S, afterUpdate as a, add_render_callback as b, createEventDispatcher as c, append as d, attr as e, binding_callbacks as f, check_outros as g, create_bidirectional_transition as h, destroy_each as i, detach as j, element as k, group_outros as l, init as m, insert as n, onMount as o, listen as p, set_data as q, run_all as r, safe_not_equal as s, set_input_value as t, space as u, svg_element as v, text as w, toggle_class as x, transition_in as y, transition_out as z };

@@ -1,4 +1,4 @@
-import { F as identity } from '../common/index-dcbb18e9.js';
+import { G as identity } from '../common/index-3b9b3c73.js';
 
 function fade(node, { delay = 0, duration = 400, easing = identity }) {
     const o = +getComputedStyle(node).opacity;
