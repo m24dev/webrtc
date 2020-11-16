@@ -188,28 +188,28 @@
     </div>
     <button type="button" class="btn btn-icon text-light btn-stop" on:click={handleClose}>
         <svg class="bi" width="32" height="32" fill="currentColor">
-            <use xlink:href="/dist/images/bootstrap-icons.svg#box-arrow-in-left"/>
+            <use xlink:href="dist/images/bootstrap-icons.svg#box-arrow-in-left"/>
         </svg>
     </button>
     <button type="button" class="btn btn-icon btn-answer text-light" transition:fade on:click={handleVideoToggle}>
         {#if isVideoHidden}
             <svg class="bi" width="32" height="32" fill="currentColor">
-                <use xlink:href="/dist/images/bootstrap-icons.svg#camera-video-off"/>
+                <use xlink:href="dist/images/bootstrap-icons.svg#camera-video-off"/>
             </svg>
         {:else}
             <svg class="bi" width="32" height="32" fill="currentColor">
-                <use xlink:href="/dist/images/bootstrap-icons.svg#camera-video"/>
+                <use xlink:href="dist/images/bootstrap-icons.svg#camera-video"/>
             </svg>
         {/if}
     </button>
     <button type="button" class="btn btn-icon text-light btn-volume" on:click={handleVolumeToggle}>
         {#if isMuted}
             <svg class="bi" width="32" height="32" fill="currentColor">
-                <use xlink:href="/dist/images/bootstrap-icons.svg#volume-mute-fill"/>
+                <use xlink:href="dist/images/bootstrap-icons.svg#volume-mute-fill"/>
             </svg>
         {:else}
             <svg class="bi" width="32" height="32" fill="currentColor">
-                <use xlink:href="/dist/images/bootstrap-icons.svg#volume-up-fill"/>
+                <use xlink:href="dist/images/bootstrap-icons.svg#volume-up-fill"/>
             </svg>
         {/if}
     </button>
@@ -235,7 +235,7 @@
                 <div class="input-group-append">
                     <button type="button" class="btn btn-primary" on:click={handleSend}>
                         <svg class="bi" width="16" height="16" fill="currentColor">
-                            <use xlink:href="/dist/images/bootstrap-icons.svg#chat-fill"/>
+                            <use xlink:href="dist/images/bootstrap-icons.svg#chat-fill"/>
                         </svg>
                     </button>
                 </div>

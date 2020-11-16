@@ -46,7 +46,7 @@ function create_else_block_1(ctx) {
 		c() {
 			svg = svg_element("svg");
 			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video");
+			xlink_attr(use, "xlink:href", "dist/images/bootstrap-icons.svg#camera-video");
 			attr(svg, "class", "bi");
 			attr(svg, "width", "32");
 			attr(svg, "height", "32");
@@ -71,7 +71,7 @@ function create_if_block_2(ctx) {
 		c() {
 			svg = svg_element("svg");
 			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video-off");
+			xlink_attr(use, "xlink:href", "dist/images/bootstrap-icons.svg#camera-video-off");
 			attr(svg, "class", "bi");
 			attr(svg, "width", "32");
 			attr(svg, "height", "32");
@@ -96,7 +96,7 @@ function create_else_block(ctx) {
 		c() {
 			svg = svg_element("svg");
 			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#volume-up-fill");
+			xlink_attr(use, "xlink:href", "dist/images/bootstrap-icons.svg#volume-up-fill");
 			attr(svg, "class", "bi");
 			attr(svg, "width", "32");
 			attr(svg, "height", "32");
@@ -121,7 +121,7 @@ function create_if_block_1(ctx) {
 		c() {
 			svg = svg_element("svg");
 			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#volume-mute-fill");
+			xlink_attr(use, "xlink:href", "dist/images/bootstrap-icons.svg#volume-mute-fill");
 			attr(svg, "class", "bi");
 			attr(svg, "width", "32");
 			attr(svg, "height", "32");
@@ -308,7 +308,7 @@ function create_fragment(ctx) {
 			video_1 = element("video");
 			t0 = space();
 			button0 = element("button");
-			button0.innerHTML = `<svg class="bi" width="32" height="32" fill="currentColor"><use xlink:href="/dist/images/bootstrap-icons.svg#box-arrow-in-left"></use></svg>`;
+			button0.innerHTML = `<svg class="bi" width="32" height="32" fill="currentColor"><use xlink:href="dist/images/bootstrap-icons.svg#box-arrow-in-left"></use></svg>`;
 			t1 = space();
 			button1 = element("button");
 			if_block0.c();
@@ -332,7 +332,7 @@ function create_fragment(ctx) {
 			t6 = space();
 			div2 = element("div");
 			button3 = element("button");
-			button3.innerHTML = `<svg class="bi" width="16" height="16" fill="currentColor"><use xlink:href="/dist/images/bootstrap-icons.svg#chat-fill"></use></svg>`;
+			button3.innerHTML = `<svg class="bi" width="16" height="16" fill="currentColor"><use xlink:href="dist/images/bootstrap-icons.svg#chat-fill"></use></svg>`;
 			video_1.playsInline = true;
 			video_1.autoplay = true;
 			video_1.muted = /*isMuted*/ ctx[6];
