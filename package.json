@@ -20,6 +20,7 @@
     "@snowpack/plugin-dotenv": "^2.0.4",
     "@snowpack/plugin-sass": "^1.1.1",
     "@snowpack/plugin-svelte": "^3.3.0",
+    "@snowpack/plugin-webpack": "^2.1.1",
     "snowpack": "^2.17.0"
   }
 }

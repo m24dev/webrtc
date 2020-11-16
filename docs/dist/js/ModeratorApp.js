@@ -403,7 +403,7 @@ function create_fragment(ctx) {
 	};
 }
 
-let username = "Босс";
+let username = "Админ";
 
 function instance($$self, $$props, $$invalidate) {
 	const peer = new Peer(settings.moderatorId, settings.callOptions);

@@ -96,7 +96,7 @@
 </style>
 <script>
     import { fade } from 'svelte/transition';
-    import { onMount, createEventDispatcher } from 'svelte';
+    import { onMount, afterUpdate, createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
 
@@ -104,6 +104,7 @@
     export let dataConnection;
     export let mediaConnection;
     export let closed;
+    export let chat;
     export let inputMessage;
 
     let video;
@@ -130,6 +131,10 @@
         }
 
         inputMessage.focus();
+    });
+
+    afterUpdate(() => {
+        chat.scrollTop = chat.scrollHeight;
     });
 
     function handleSend(e) {
@@ -214,7 +219,7 @@
         </div>
     {/if}
     <div class="connection__chat">
-        <div class="chat d-flex align-items-end p-4">
+        <div class="chat d-flex align-items-end p-4" bind:this={chat}>
             {#each messages as message}
                 <div class="chat__item d-flex mb-2" class:chat__item_alt={message.from === username} transition:fade>
                     <div class="chat__message d-inline-block p-2 shadow-sm">

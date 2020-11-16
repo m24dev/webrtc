@@ -22,7 +22,7 @@
 
     let isPeerReady = false;
     let connections = [];
-    let username = 'Босс';
+    let username = 'Админ';
 
     function onConneсtionClose(event) {
         connections = connections.map(connection => {

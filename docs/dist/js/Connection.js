@@ -29,15 +29,15 @@ import {
 } from "../../web_modules/svelte/internal.js";
 
 import { fade } from "../../web_modules/svelte/transition.js";
-import { onMount, createEventDispatcher } from "../../web_modules/svelte.js";
+import { onMount, afterUpdate, createEventDispatcher } from "../../web_modules/svelte.js";
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[20] = list[i];
+	child_ctx[22] = list[i];
 	return child_ctx;
 }
 
-// (196:8) {:else}
+// (201:8) {:else}
 function create_else_block_1(ctx) {
 	let svg;
 	let use;
@@ -62,7 +62,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (192:8) {#if isVideoHidden}
+// (197:8) {#if isVideoHidden}
 function create_if_block_2(ctx) {
 	let svg;
 	let use;
@@ -87,7 +87,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (207:8) {:else}
+// (212:8) {:else}
 function create_else_block(ctx) {
 	let svg;
 	let use;
@@ -112,7 +112,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (203:8) {#if isMuted}
+// (208:8) {#if isMuted}
 function create_if_block_1(ctx) {
 	let svg;
 	let use;
@@ -137,7 +137,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (213:4) {#if closed}
+// (218:4) {#if closed}
 function create_if_block(ctx) {
 	let div1;
 	let div1_transition;
@@ -175,16 +175,16 @@ function create_if_block(ctx) {
 	};
 }
 
-// (220:12) {#each messages as message}
+// (225:12) {#each messages as message}
 function create_each_block(ctx) {
 	let div3;
 	let div2;
 	let div0;
-	let t0_value = /*message*/ ctx[20].from + "";
+	let t0_value = /*message*/ ctx[22].from + "";
 	let t0;
 	let t1;
 	let div1;
-	let t2_value = /*message*/ ctx[20].text + "";
+	let t2_value = /*message*/ ctx[22].text + "";
 	let t2;
 	let t3;
 	let div3_transition;
@@ -204,7 +204,7 @@ function create_each_block(ctx) {
 			attr(div1, "class", "chat__text");
 			attr(div2, "class", "chat__message d-inline-block p-2 shadow-sm svelte-bitwll");
 			attr(div3, "class", "chat__item d-flex mb-2 svelte-bitwll");
-			toggle_class(div3, "chat__item_alt", /*message*/ ctx[20].from === /*username*/ ctx[1]);
+			toggle_class(div3, "chat__item_alt", /*message*/ ctx[22].from === /*username*/ ctx[2]);
 		},
 		m(target, anchor) {
 			insert(target, div3, anchor);
@@ -218,11 +218,11 @@ function create_each_block(ctx) {
 			current = true;
 		},
 		p(ctx, dirty) {
-			if ((!current || dirty & /*messages*/ 64) && t0_value !== (t0_value = /*message*/ ctx[20].from + "")) set_data(t0, t0_value);
-			if ((!current || dirty & /*messages*/ 64) && t2_value !== (t2_value = /*message*/ ctx[20].text + "")) set_data(t2, t2_value);
+			if ((!current || dirty & /*messages*/ 128) && t0_value !== (t0_value = /*message*/ ctx[22].from + "")) set_data(t0, t0_value);
+			if ((!current || dirty & /*messages*/ 128) && t2_value !== (t2_value = /*message*/ ctx[22].text + "")) set_data(t2, t2_value);
 
-			if (dirty & /*messages, username*/ 66) {
-				toggle_class(div3, "chat__item_alt", /*message*/ ctx[20].from === /*username*/ ctx[1]);
+			if (dirty & /*messages, username*/ 132) {
+				toggle_class(div3, "chat__item_alt", /*message*/ ctx[22].from === /*username*/ ctx[2]);
 			}
 		},
 		i(local) {
@@ -275,7 +275,7 @@ function create_fragment(ctx) {
 	let dispose;
 
 	function select_block_type(ctx, dirty) {
-		if (/*isVideoHidden*/ ctx[4]) return create_if_block_2;
+		if (/*isVideoHidden*/ ctx[5]) return create_if_block_2;
 		return create_else_block_1;
 	}
 
@@ -283,14 +283,14 @@ function create_fragment(ctx) {
 	let if_block0 = current_block_type(ctx);
 
 	function select_block_type_1(ctx, dirty) {
-		if (/*isMuted*/ ctx[5]) return create_if_block_1;
+		if (/*isMuted*/ ctx[6]) return create_if_block_1;
 		return create_else_block;
 	}
 
 	let current_block_type_1 = select_block_type_1(ctx, -1);
 	let if_block1 = current_block_type_1(ctx);
-	let if_block2 = /*closed*/ ctx[2] && create_if_block(ctx);
-	let each_value = /*messages*/ ctx[6];
+	let if_block2 = /*closed*/ ctx[3] && create_if_block(ctx);
+	let each_value = /*messages*/ ctx[7];
 	let each_blocks = [];
 
 	for (let i = 0; i < each_value.length; i += 1) {
@@ -335,10 +335,10 @@ function create_fragment(ctx) {
 			button3.innerHTML = `<svg class="bi" width="16" height="16" fill="currentColor"><use xlink:href="/dist/images/bootstrap-icons.svg#chat-fill"></use></svg>`;
 			video_1.playsInline = true;
 			video_1.autoplay = true;
-			video_1.muted = /*isMuted*/ ctx[5];
+			video_1.muted = /*isMuted*/ ctx[6];
 			attr(video_1, "class", "svelte-bitwll");
 			attr(div0, "class", "connection__video svelte-bitwll");
-			toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[4]);
+			toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[5]);
 			attr(button0, "type", "button");
 			attr(button0, "class", "btn btn-icon text-light btn-stop svelte-bitwll");
 			attr(button1, "type", "button");
@@ -361,7 +361,7 @@ function create_fragment(ctx) {
 			insert(target, div6, anchor);
 			append(div6, div0);
 			append(div0, video_1);
-			/*video_1_binding*/ ctx[14](video_1);
+			/*video_1_binding*/ ctx[15](video_1);
 			append(div6, t0);
 			append(div6, button0);
 			append(div6, t1);
@@ -380,12 +380,13 @@ function create_fragment(ctx) {
 				each_blocks[i].m(div1, null);
 			}
 
+			/*div1_binding*/ ctx[16](div1);
 			append(div5, t5);
 			append(div5, div4);
 			append(div4, div3);
 			append(div3, input);
-			/*input_binding*/ ctx[15](input);
-			set_input_value(input, /*newMessage*/ ctx[7]);
+			/*input_binding*/ ctx[17](input);
+			set_input_value(input, /*newMessage*/ ctx[8]);
 			append(div3, t6);
 			append(div3, div2);
 			append(div2, button3);
@@ -393,24 +394,24 @@ function create_fragment(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(button0, "click", /*handleClose*/ ctx[11]),
-					listen(button1, "click", /*handleVideoToggle*/ ctx[9]),
-					listen(button2, "click", /*handleVolumeToggle*/ ctx[10]),
-					listen(input, "input", /*input_input_handler*/ ctx[16]),
-					listen(input, "keypress", /*handleSend*/ ctx[8]),
-					listen(button3, "click", /*handleSend*/ ctx[8])
+					listen(button0, "click", /*handleClose*/ ctx[12]),
+					listen(button1, "click", /*handleVideoToggle*/ ctx[10]),
+					listen(button2, "click", /*handleVolumeToggle*/ ctx[11]),
+					listen(input, "input", /*input_input_handler*/ ctx[18]),
+					listen(input, "keypress", /*handleSend*/ ctx[9]),
+					listen(button3, "click", /*handleSend*/ ctx[9])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, [dirty]) {
-			if (!current || dirty & /*isMuted*/ 32) {
-				video_1.muted = /*isMuted*/ ctx[5];
+			if (!current || dirty & /*isMuted*/ 64) {
+				video_1.muted = /*isMuted*/ ctx[6];
 			}
 
-			if (dirty & /*isVideoHidden*/ 16) {
-				toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[4]);
+			if (dirty & /*isVideoHidden*/ 32) {
+				toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[5]);
 			}
 
 			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
@@ -433,9 +434,9 @@ function create_fragment(ctx) {
 				}
 			}
 
-			if (/*closed*/ ctx[2]) {
+			if (/*closed*/ ctx[3]) {
 				if (if_block2) {
-					if (dirty & /*closed*/ 4) {
+					if (dirty & /*closed*/ 8) {
 						transition_in(if_block2, 1);
 					}
 				} else {
@@ -454,8 +455,8 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (dirty & /*messages, username*/ 66) {
-				each_value = /*messages*/ ctx[6];
+			if (dirty & /*messages, username*/ 132) {
+				each_value = /*messages*/ ctx[7];
 				let i;
 
 				for (i = 0; i < each_value.length; i += 1) {
@@ -481,8 +482,8 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (dirty & /*newMessage*/ 128 && input.value !== /*newMessage*/ ctx[7]) {
-				set_input_value(input, /*newMessage*/ ctx[7]);
+			if (dirty & /*newMessage*/ 256 && input.value !== /*newMessage*/ ctx[8]) {
+				set_input_value(input, /*newMessage*/ ctx[8]);
 			}
 		},
 		i(local) {
@@ -522,14 +523,15 @@ function create_fragment(ctx) {
 		},
 		d(detaching) {
 			if (detaching) detach(div6);
-			/*video_1_binding*/ ctx[14](null);
+			/*video_1_binding*/ ctx[15](null);
 			if (detaching && div0_transition) div0_transition.end();
 			if_block0.d();
 			if (detaching && button1_transition) button1_transition.end();
 			if_block1.d();
 			if (if_block2) if_block2.d();
 			destroy_each(each_blocks, detaching);
-			/*input_binding*/ ctx[15](null);
+			/*div1_binding*/ ctx[16](null);
+			/*input_binding*/ ctx[17](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -542,6 +544,7 @@ function instance($$self, $$props, $$invalidate) {
 	let { dataConnection } = $$props;
 	let { mediaConnection } = $$props;
 	let { closed } = $$props;
+	let { chat } = $$props;
 	let { inputMessage } = $$props;
 	let video;
 	let isAccepted = username === dataConnection.metadata.username;
@@ -552,10 +555,10 @@ function instance($$self, $$props, $$invalidate) {
 
 	mediaConnection.on("stream", stream => {
 		console.log("stream");
-		$$invalidate(3, video.srcObject = stream, video);
+		$$invalidate(4, video.srcObject = stream, video);
 
 		$$invalidate(
-			3,
+			4,
 			video.onloadedmetadata = () => {
 				video.play();
 			},
@@ -565,10 +568,10 @@ function instance($$self, $$props, $$invalidate) {
 
 	onMount(() => {
 		if (username === dataConnection.metadata.username) {
-			$$invalidate(3, video.srcObject = mediaConnection.localStream, video);
+			$$invalidate(4, video.srcObject = mediaConnection.localStream, video);
 
 			$$invalidate(
-				3,
+				4,
 				video.onloadedmetadata = () => {
 					video.play();
 				},
@@ -579,16 +582,20 @@ function instance($$self, $$props, $$invalidate) {
 		inputMessage.focus();
 	});
 
+	afterUpdate(() => {
+		$$invalidate(0, chat.scrollTop = chat.scrollHeight, chat);
+	});
+
 	function handleSend(e) {
 		if (e.type === "keypress" && e.keyCode != 13) return;
 		let data = { from: username, text: newMessage };
 		dataConnection.send(data);
 		handleMessage(data);
-		$$invalidate(7, newMessage = "");
+		$$invalidate(8, newMessage = "");
 	}
 
 	function handleMessage(data) {
-		$$invalidate(6, messages = [...messages, data]);
+		$$invalidate(7, messages = [...messages, data]);
 	}
 
 	function handleVideoToggle() {
@@ -597,11 +604,11 @@ function instance($$self, $$props, $$invalidate) {
 			isAccepted = true;
 		}
 
-		$$invalidate(4, isVideoHidden = !isVideoHidden);
+		$$invalidate(5, isVideoHidden = !isVideoHidden);
 	}
 
 	function handleVolumeToggle() {
-		$$invalidate(5, isMuted = !isMuted);
+		$$invalidate(6, isMuted = !isMuted);
 	}
 
 	function handleClose() {
@@ -622,31 +629,40 @@ function instance($$self, $$props, $$invalidate) {
 	function video_1_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			video = $$value;
-			$$invalidate(3, video);
+			$$invalidate(4, video);
+		});
+	}
+
+	function div1_binding($$value) {
+		binding_callbacks[$$value ? "unshift" : "push"](() => {
+			chat = $$value;
+			$$invalidate(0, chat);
 		});
 	}
 
 	function input_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			inputMessage = $$value;
-			$$invalidate(0, inputMessage);
+			$$invalidate(1, inputMessage);
 		});
 	}
 
 	function input_input_handler() {
 		newMessage = this.value;
-		$$invalidate(7, newMessage);
+		$$invalidate(8, newMessage);
 	}
 
 	$$self.$$set = $$props => {
-		if ("username" in $$props) $$invalidate(1, username = $$props.username);
-		if ("dataConnection" in $$props) $$invalidate(12, dataConnection = $$props.dataConnection);
-		if ("mediaConnection" in $$props) $$invalidate(13, mediaConnection = $$props.mediaConnection);
-		if ("closed" in $$props) $$invalidate(2, closed = $$props.closed);
-		if ("inputMessage" in $$props) $$invalidate(0, inputMessage = $$props.inputMessage);
+		if ("username" in $$props) $$invalidate(2, username = $$props.username);
+		if ("dataConnection" in $$props) $$invalidate(13, dataConnection = $$props.dataConnection);
+		if ("mediaConnection" in $$props) $$invalidate(14, mediaConnection = $$props.mediaConnection);
+		if ("closed" in $$props) $$invalidate(3, closed = $$props.closed);
+		if ("chat" in $$props) $$invalidate(0, chat = $$props.chat);
+		if ("inputMessage" in $$props) $$invalidate(1, inputMessage = $$props.inputMessage);
 	};
 
 	return [
+		chat,
 		inputMessage,
 		username,
 		closed,
@@ -662,6 +678,7 @@ function instance($$self, $$props, $$invalidate) {
 		dataConnection,
 		mediaConnection,
 		video_1_binding,
+		div1_binding,
 		input_binding,
 		input_input_handler
 	];
@@ -672,11 +689,12 @@ class Connection extends SvelteComponent {
 		super();
 
 		init(this, options, instance, create_fragment, safe_not_equal, {
-			username: 1,
-			dataConnection: 12,
-			mediaConnection: 13,
-			closed: 2,
-			inputMessage: 0
+			username: 2,
+			dataConnection: 13,
+			mediaConnection: 14,
+			closed: 3,
+			chat: 0,
+			inputMessage: 1
 		});
 	}
 }
