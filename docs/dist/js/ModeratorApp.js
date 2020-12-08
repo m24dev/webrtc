@@ -30,7 +30,7 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (78:4) {:else}
+// (79:4) {:else}
 function create_else_block_1(ctx) {
 	let div1;
 
@@ -38,7 +38,7 @@ function create_else_block_1(ctx) {
 		c() {
 			div1 = element("div");
 			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Loading...</span></div>`;
-			attr(div1, "class", "loader svelte-1o6rzx3");
+			attr(div1, "class", "loader svelte-hu8mga");
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -52,7 +52,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (64:4) {#if isPeerReady}
+// (65:4) {#if isPeerReady}
 function create_if_block(ctx) {
 	let current_block_type_index;
 	let if_block;
@@ -122,7 +122,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (73:8) {:else}
+// (74:8) {:else}
 function create_else_block(ctx) {
 	let div;
 
@@ -144,7 +144,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (65:8) {#if connections.length}
+// (66:8) {#if connections.length}
 function create_if_block_1(ctx) {
 	let div;
 	let current;
@@ -167,7 +167,7 @@ function create_if_block_1(ctx) {
 				each_blocks[i].c();
 			}
 
-			attr(div, "class", "connections svelte-1o6rzx3");
+			attr(div, "class", "connections svelte-hu8mga");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
@@ -231,7 +231,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (68:20) {#if connection.dataConnection && connection.mediaConnection}
+// (69:20) {#if connection.dataConnection && connection.mediaConnection}
 function create_if_block_2(ctx) {
 	let connection;
 	let current;
@@ -277,7 +277,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (67:16) {#each connections as connection}
+// (68:16) {#each connections as connection}
 function create_each_block(ctx) {
 	let if_block_anchor;
 	let current;
@@ -353,7 +353,7 @@ function create_fragment(ctx) {
 		c() {
 			div = element("div");
 			if_block.c();
-			attr(div, "class", "moderator svelte-1o6rzx3");
+			attr(div, "class", "moderator svelte-hu8mga");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
