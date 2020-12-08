@@ -1,7 +1,7 @@
 export default {
     moderatorId: 'm24webrtc',
     callOptions: {
-        host: 'aedcde2c500b.ngrok.io',
+        host: '186528f25664.ngrok.io',
         port: 443,
         path: '/myapp',
         // debug: 3,
