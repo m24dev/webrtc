@@ -20,10 +20,8 @@
         z-index: 100;
     }
     .connection {
-        position: relative;
-        height: 600px;
-        width: 400px;
-        margin: 0 10px 20px;
+        height: 100%;
+        width: 100%;
         &__video {
             position: absolute;
             left: 0;
@@ -104,18 +102,21 @@
     export let dataConnection;
     export let mediaConnection;
     export let closed;
-    export let chat;
-    export let inputMessage;
 
     let video;
     let isAccepted = (username === dataConnection.metadata.username);
     let isVideoHidden = true;
     let isMuted = true;
+    let isStreamReady = false;
+    let chat;
+    let inputMessage;
     let messages = [];
     let newMessage = '';
 
     mediaConnection.on('stream', (stream) => {
+        if (isStreamReady) return false;
         console.log('stream');
+        isStreamReady = true;
         video.srcObject = stream;
         video.onloadedmetadata = () => {
             video.play();

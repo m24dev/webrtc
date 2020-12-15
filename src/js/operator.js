@@ -1,10 +1,10 @@
 import ready from "domready";
-import ModeratorApp from './ModeratorApp.svelte';
+import OperatorApp from './OperatorApp.svelte';
 import "../scss/index.scss";
 
 ready(() => {
 
-    const app = new ModeratorApp({
+    const app = new OperatorApp({
         target: document.getElementById('app')
     });
 

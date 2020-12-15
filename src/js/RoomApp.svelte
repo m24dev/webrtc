@@ -61,26 +61,24 @@
     });
 </script>
 
-<div class="moderator">
-    {#if isPeerReady}
-        {#if connections.length}
-            <div class="connections">
-                {#each connections as connection}
-                    {#if connection.dataConnection && connection.mediaConnection}
-                        <Connection username={username} dataConnection={connection.dataConnection} mediaConnection={connection.mediaConnection} closed={connection.isClosed} on:close={onConneсtionClose} />
-                    {/if}
-                {/each}
-            </div>
-        {:else}
-            <div class="p-5 text-center">
-                <p>Ожидание соединений</p>
-            </div>
-        {/if}
+{#if isPeerReady}
+    {#if connections.length}
+        <div class="connections">
+            {#each connections as connection}
+                {#if connection.dataConnection && connection.mediaConnection}
+                    <Connection username={username} dataConnection={connection.dataConnection} mediaConnection={connection.mediaConnection} closed={connection.isClosed} on:close={onConneсtionClose} />
+                {/if}
+            {/each}
+        </div>
     {:else}
-        <div class="loader">
-            <div class="spinner-border text-primary">
-                <span class="sr-only">Loading...</span>
-            </div>
+        <div class="p-5 text-center">
+            <p>Ожидание соединения</p>
         </div>
     {/if}
-</div>
+{:else}
+    <div class="loader">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+{/if}
