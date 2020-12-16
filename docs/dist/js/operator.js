@@ -1,10 +1,10 @@
 import ready from "../../web_modules/domready.js";
-import ModeratorApp from './ModeratorApp.js';
+import OperatorApp from './OperatorApp.js';
 import "../scss/index.css.proxy.js";
 
 ready(() => {
 
-    const app = new ModeratorApp({
+    const app = new OperatorApp({
         target: document.getElementById('app')
     });
 

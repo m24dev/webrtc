@@ -33,11 +33,11 @@ import { onMount, afterUpdate, createEventDispatcher } from "../../web_modules/s
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[22] = list[i];
+	child_ctx[23] = list[i];
 	return child_ctx;
 }
 
-// (201:8) {:else}
+// (202:8) {:else}
 function create_else_block_1(ctx) {
 	let svg;
 	let use;
@@ -62,7 +62,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (197:8) {#if isVideoHidden}
+// (198:8) {#if isVideoHidden}
 function create_if_block_2(ctx) {
 	let svg;
 	let use;
@@ -87,7 +87,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (212:8) {:else}
+// (213:8) {:else}
 function create_else_block(ctx) {
 	let svg;
 	let use;
@@ -112,7 +112,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (208:8) {#if isMuted}
+// (209:8) {#if isMuted}
 function create_if_block_1(ctx) {
 	let svg;
 	let use;
@@ -137,7 +137,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (218:4) {#if closed}
+// (219:4) {#if closed}
 function create_if_block(ctx) {
 	let div1;
 	let div1_transition;
@@ -147,7 +147,7 @@ function create_if_block(ctx) {
 		c() {
 			div1 = element("div");
 			div1.innerHTML = `<div class="alert alert-warning text-center">Соединение закрыто</div>`;
-			attr(div1, "class", "popup p-4 svelte-bitwll");
+			attr(div1, "class", "popup p-4 svelte-ey45hr");
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -175,16 +175,16 @@ function create_if_block(ctx) {
 	};
 }
 
-// (225:12) {#each messages as message}
+// (226:12) {#each messages as message}
 function create_each_block(ctx) {
 	let div3;
 	let div2;
 	let div0;
-	let t0_value = /*message*/ ctx[22].from + "";
+	let t0_value = /*message*/ ctx[23].from + "";
 	let t0;
 	let t1;
 	let div1;
-	let t2_value = /*message*/ ctx[22].text + "";
+	let t2_value = /*message*/ ctx[23].text + "";
 	let t2;
 	let t3;
 	let div3_transition;
@@ -200,11 +200,11 @@ function create_each_block(ctx) {
 			div1 = element("div");
 			t2 = text(t2_value);
 			t3 = space();
-			attr(div0, "class", "chat__author font-weight-bold svelte-bitwll");
+			attr(div0, "class", "chat__author font-weight-bold svelte-ey45hr");
 			attr(div1, "class", "chat__text");
-			attr(div2, "class", "chat__message d-inline-block p-2 shadow-sm svelte-bitwll");
-			attr(div3, "class", "chat__item d-flex mb-2 svelte-bitwll");
-			toggle_class(div3, "chat__item_alt", /*message*/ ctx[22].from === /*username*/ ctx[2]);
+			attr(div2, "class", "chat__message d-inline-block p-2 shadow-sm svelte-ey45hr");
+			attr(div3, "class", "chat__item d-flex mb-2 svelte-ey45hr");
+			toggle_class(div3, "chat__item_alt", /*message*/ ctx[23].from === /*username*/ ctx[0]);
 		},
 		m(target, anchor) {
 			insert(target, div3, anchor);
@@ -218,11 +218,11 @@ function create_each_block(ctx) {
 			current = true;
 		},
 		p(ctx, dirty) {
-			if ((!current || dirty & /*messages*/ 128) && t0_value !== (t0_value = /*message*/ ctx[22].from + "")) set_data(t0, t0_value);
-			if ((!current || dirty & /*messages*/ 128) && t2_value !== (t2_value = /*message*/ ctx[22].text + "")) set_data(t2, t2_value);
+			if ((!current || dirty & /*messages*/ 128) && t0_value !== (t0_value = /*message*/ ctx[23].from + "")) set_data(t0, t0_value);
+			if ((!current || dirty & /*messages*/ 128) && t2_value !== (t2_value = /*message*/ ctx[23].text + "")) set_data(t2, t2_value);
 
-			if (dirty & /*messages, username*/ 132) {
-				toggle_class(div3, "chat__item_alt", /*message*/ ctx[22].from === /*username*/ ctx[2]);
+			if (dirty & /*messages, username*/ 129) {
+				toggle_class(div3, "chat__item_alt", /*message*/ ctx[23].from === /*username*/ ctx[0]);
 			}
 		},
 		i(local) {
@@ -275,7 +275,7 @@ function create_fragment(ctx) {
 	let dispose;
 
 	function select_block_type(ctx, dirty) {
-		if (/*isVideoHidden*/ ctx[5]) return create_if_block_2;
+		if (/*isVideoHidden*/ ctx[3]) return create_if_block_2;
 		return create_else_block_1;
 	}
 
@@ -283,13 +283,13 @@ function create_fragment(ctx) {
 	let if_block0 = current_block_type(ctx);
 
 	function select_block_type_1(ctx, dirty) {
-		if (/*isMuted*/ ctx[6]) return create_if_block_1;
+		if (/*isMuted*/ ctx[4]) return create_if_block_1;
 		return create_else_block;
 	}
 
 	let current_block_type_1 = select_block_type_1(ctx, -1);
 	let if_block1 = current_block_type_1(ctx);
-	let if_block2 = /*closed*/ ctx[3] && create_if_block(ctx);
+	let if_block2 = /*closed*/ ctx[1] && create_if_block(ctx);
 	let each_value = /*messages*/ ctx[7];
 	let each_blocks = [];
 
@@ -335,17 +335,17 @@ function create_fragment(ctx) {
 			button3.innerHTML = `<svg class="bi" width="16" height="16" fill="currentColor"><use xlink:href="dist/images/bootstrap-icons.svg#chat-fill"></use></svg>`;
 			video_1.playsInline = true;
 			video_1.autoplay = true;
-			video_1.muted = /*isMuted*/ ctx[6];
-			attr(video_1, "class", "svelte-bitwll");
-			attr(div0, "class", "connection__video svelte-bitwll");
-			toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[5]);
+			video_1.muted = /*isMuted*/ ctx[4];
+			attr(video_1, "class", "svelte-ey45hr");
+			attr(div0, "class", "connection__video svelte-ey45hr");
+			toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[3]);
 			attr(button0, "type", "button");
-			attr(button0, "class", "btn btn-icon text-light btn-stop svelte-bitwll");
+			attr(button0, "class", "btn btn-icon text-light btn-stop svelte-ey45hr");
 			attr(button1, "type", "button");
-			attr(button1, "class", "btn btn-icon btn-answer text-light svelte-bitwll");
+			attr(button1, "class", "btn btn-icon btn-answer text-light svelte-ey45hr");
 			attr(button2, "type", "button");
-			attr(button2, "class", "btn btn-icon text-light btn-volume svelte-bitwll");
-			attr(div1, "class", "chat d-flex align-items-end p-4 svelte-bitwll");
+			attr(button2, "class", "btn btn-icon text-light btn-volume svelte-ey45hr");
+			attr(div1, "class", "chat d-flex align-items-end p-4 svelte-ey45hr");
 			attr(input, "type", "text");
 			attr(input, "class", "form-control");
 			attr(input, "placeholder", "Текст сообщения");
@@ -354,8 +354,8 @@ function create_fragment(ctx) {
 			attr(div2, "class", "input-group-append");
 			attr(div3, "class", "input-group shadow-sm");
 			attr(div4, "class", "p-4");
-			attr(div5, "class", "connection__chat svelte-bitwll");
-			attr(div6, "class", "connection bg-dark svelte-bitwll");
+			attr(div5, "class", "connection__chat svelte-ey45hr");
+			attr(div6, "class", "connection bg-dark svelte-ey45hr");
 		},
 		m(target, anchor) {
 			insert(target, div6, anchor);
@@ -406,12 +406,12 @@ function create_fragment(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
-			if (!current || dirty & /*isMuted*/ 64) {
-				video_1.muted = /*isMuted*/ ctx[6];
+			if (!current || dirty & /*isMuted*/ 16) {
+				video_1.muted = /*isMuted*/ ctx[4];
 			}
 
-			if (dirty & /*isVideoHidden*/ 32) {
-				toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[5]);
+			if (dirty & /*isVideoHidden*/ 8) {
+				toggle_class(div0, "invisible", /*isVideoHidden*/ ctx[3]);
 			}
 
 			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
@@ -434,9 +434,9 @@ function create_fragment(ctx) {
 				}
 			}
 
-			if (/*closed*/ ctx[3]) {
+			if (/*closed*/ ctx[1]) {
 				if (if_block2) {
-					if (dirty & /*closed*/ 8) {
+					if (dirty & /*closed*/ 2) {
 						transition_in(if_block2, 1);
 					}
 				} else {
@@ -455,7 +455,7 @@ function create_fragment(ctx) {
 				check_outros();
 			}
 
-			if (dirty & /*messages, username*/ 132) {
+			if (dirty & /*messages, username*/ 129) {
 				each_value = /*messages*/ ctx[7];
 				let i;
 
@@ -544,21 +544,24 @@ function instance($$self, $$props, $$invalidate) {
 	let { dataConnection } = $$props;
 	let { mediaConnection } = $$props;
 	let { closed } = $$props;
-	let { chat } = $$props;
-	let { inputMessage } = $$props;
 	let video;
 	let isAccepted = username === dataConnection.metadata.username;
 	let isVideoHidden = true;
 	let isMuted = true;
+	let isStreamReady = false;
+	let chat;
+	let inputMessage;
 	let messages = [];
 	let newMessage = "";
 
 	mediaConnection.on("stream", stream => {
+		if (isStreamReady) return false;
 		console.log("stream");
-		$$invalidate(4, video.srcObject = stream, video);
+		isStreamReady = true;
+		$$invalidate(2, video.srcObject = stream, video);
 
 		$$invalidate(
-			4,
+			2,
 			video.onloadedmetadata = () => {
 				video.play();
 			},
@@ -568,10 +571,10 @@ function instance($$self, $$props, $$invalidate) {
 
 	onMount(() => {
 		if (username === dataConnection.metadata.username) {
-			$$invalidate(4, video.srcObject = mediaConnection.localStream, video);
+			$$invalidate(2, video.srcObject = mediaConnection.localStream, video);
 
 			$$invalidate(
-				4,
+				2,
 				video.onloadedmetadata = () => {
 					video.play();
 				},
@@ -583,7 +586,7 @@ function instance($$self, $$props, $$invalidate) {
 	});
 
 	afterUpdate(() => {
-		$$invalidate(0, chat.scrollTop = chat.scrollHeight, chat);
+		$$invalidate(5, chat.scrollTop = chat.scrollHeight, chat);
 	});
 
 	function handleSend(e) {
@@ -604,11 +607,11 @@ function instance($$self, $$props, $$invalidate) {
 			isAccepted = true;
 		}
 
-		$$invalidate(5, isVideoHidden = !isVideoHidden);
+		$$invalidate(3, isVideoHidden = !isVideoHidden);
 	}
 
 	function handleVolumeToggle() {
-		$$invalidate(6, isMuted = !isMuted);
+		$$invalidate(4, isMuted = !isMuted);
 	}
 
 	function handleClose() {
@@ -629,21 +632,21 @@ function instance($$self, $$props, $$invalidate) {
 	function video_1_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			video = $$value;
-			$$invalidate(4, video);
+			$$invalidate(2, video);
 		});
 	}
 
 	function div1_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			chat = $$value;
-			$$invalidate(0, chat);
+			$$invalidate(5, chat);
 		});
 	}
 
 	function input_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			inputMessage = $$value;
-			$$invalidate(1, inputMessage);
+			$$invalidate(6, inputMessage);
 		});
 	}
 
@@ -653,22 +656,20 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ("username" in $$props) $$invalidate(2, username = $$props.username);
+		if ("username" in $$props) $$invalidate(0, username = $$props.username);
 		if ("dataConnection" in $$props) $$invalidate(13, dataConnection = $$props.dataConnection);
 		if ("mediaConnection" in $$props) $$invalidate(14, mediaConnection = $$props.mediaConnection);
-		if ("closed" in $$props) $$invalidate(3, closed = $$props.closed);
-		if ("chat" in $$props) $$invalidate(0, chat = $$props.chat);
-		if ("inputMessage" in $$props) $$invalidate(1, inputMessage = $$props.inputMessage);
+		if ("closed" in $$props) $$invalidate(1, closed = $$props.closed);
 	};
 
 	return [
-		chat,
-		inputMessage,
 		username,
 		closed,
 		video,
 		isVideoHidden,
 		isMuted,
+		chat,
+		inputMessage,
 		messages,
 		newMessage,
 		handleSend,
@@ -689,12 +690,10 @@ class Connection extends SvelteComponent {
 		super();
 
 		init(this, options, instance, create_fragment, safe_not_equal, {
-			username: 2,
+			username: 0,
 			dataConnection: 13,
 			mediaConnection: 14,
-			closed: 3,
-			chat: 0,
-			inputMessage: 1
+			closed: 1
 		});
 	}
 }

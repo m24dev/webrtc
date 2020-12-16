@@ -16,7 +16,8 @@ export default {
                     username: "test",
                     credential: "test"
                 }
-            ]
+            ],
+            sdpSemantics: 'unified-plan'
         }
     }
 };

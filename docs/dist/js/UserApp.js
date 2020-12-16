@@ -40,7 +40,7 @@ function create_else_block_1(ctx) {
 		c() {
 			div1 = element("div");
 			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Loading...</span></div>`;
-			attr(div1, "class", "loader svelte-7b5d3k");
+			attr(div1, "class", "loader");
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -54,7 +54,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (89:4) {#if isPeerReady}
+// (107:0) {#if isPeerReady}
 function create_if_block(ctx) {
 	let current_block_type_index;
 	let if_block;
@@ -124,7 +124,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (97:8) {:else}
+// (115:4) {:else}
 function create_else_block(ctx) {
 	let connection;
 	let current;
@@ -171,7 +171,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (90:8) {#if !(isDataConnectionStarted && isMediaConnectionStarted)}
+// (108:4) {#if !(isDataConnectionStarted && isMediaConnectionStarted)}
 function create_if_block_1(ctx) {
 	let div1;
 	let input;
@@ -198,7 +198,7 @@ function create_if_block_1(ctx) {
 			attr(button, "type", "button");
 			attr(button, "class", "btn btn-primary shadow-sm");
 			attr(div0, "class", "input-group-append");
-			attr(div1, "class", "input-start input-group svelte-7b5d3k");
+			attr(div1, "class", "input-start input-group svelte-1jj00aa");
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
@@ -251,9 +251,9 @@ function create_if_block_1(ctx) {
 }
 
 function create_fragment(ctx) {
-	let div;
 	let current_block_type_index;
 	let if_block;
+	let if_block_anchor;
 	let current;
 	const if_block_creators = [create_if_block, create_else_block_1];
 	const if_blocks = [];
@@ -268,13 +268,12 @@ function create_fragment(ctx) {
 
 	return {
 		c() {
-			div = element("div");
 			if_block.c();
-			attr(div, "class", "user bg-dark svelte-7b5d3k");
+			if_block_anchor = empty();
 		},
 		m(target, anchor) {
-			insert(target, div, anchor);
-			if_blocks[current_block_type_index].m(div, null);
+			if_blocks[current_block_type_index].m(target, anchor);
+			insert(target, if_block_anchor, anchor);
 			current = true;
 		},
 		p(ctx, [dirty]) {
@@ -301,7 +300,7 @@ function create_fragment(ctx) {
 				}
 
 				transition_in(if_block, 1);
-				if_block.m(div, null);
+				if_block.m(if_block_anchor.parentNode, if_block_anchor);
 			}
 		},
 		i(local) {
@@ -314,13 +313,16 @@ function create_fragment(ctx) {
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(div);
-			if_blocks[current_block_type_index].d();
+			if_blocks[current_block_type_index].d(detaching);
+			if (detaching) detach(if_block_anchor);
 		}
 	};
 }
 
 function instance($$self, $$props, $$invalidate) {
+	const query = new URLSearchParams(location.search);
+	const outID = `operator${query.get("id")}`;
+
 	afterUpdate(() => {
 		if (isPeerReady && !isDataConnectionStarted) {
 			inputName.focus();
@@ -337,14 +339,47 @@ function instance($$self, $$props, $$invalidate) {
 	let dataConnection;
 	let mediaConnection;
 
+	// Older browsers might not implement mediaDevices at all, so we set an empty object first
+	if (navigator.mediaDevices === undefined) {
+		navigator.mediaDevices = {};
+	}
+
+	// Some browsers partially implement mediaDevices. We can't just assign an object
+	// with getUserMedia as it would overwrite existing properties.
+	// Here, we will just add the getUserMedia property if it's missing.
+	if (navigator.mediaDevices.getUserMedia === undefined) {
+		navigator.mediaDevices.getUserMedia = function (constraints) {
+			// First get ahold of the legacy getUserMedia, if present
+			var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+			// Some browsers just don't implement it - return a rejected promise with an error
+			// to keep a consistent interface
+			if (!getUserMedia) {
+				return Promise.reject(new Error("getUserMedia is not implemented in this browser"));
+			}
+
+			// Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+			return new Promise(function (resolve, reject) {
+					getUserMedia.call(navigator, constraints, resolve, reject);
+				});
+		};
+	}
+
 	function makeConnection(e) {
 		if (e.type === "keypress" && e.keyCode != 13) return;
-		$$invalidate(6, dataConnection = peer.connect(settings.moderatorId, { metadata: { username } }));
-		$$invalidate(4, isDataConnectionStarted = true);
 
 		navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function (mediaStream) {
-			$$invalidate(7, mediaConnection = peer.call(settings.moderatorId, mediaStream));
-			$$invalidate(5, isMediaConnectionStarted = true);
+			$$invalidate(6, dataConnection = peer.connect(outID, { metadata: { username } }));
+
+			if (dataConnection) {
+				$$invalidate(4, isDataConnectionStarted = true);
+			}
+
+			$$invalidate(7, mediaConnection = peer.call(outID, mediaStream));
+
+			if (mediaConnection) {
+				$$invalidate(5, isMediaConnectionStarted = true);
+			}
 		}).catch(function (err) {
 			alert.log(err.name + ": " + err.message);
 		});
@@ -355,11 +390,20 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	peer.on("open", function (id) {
+		console.log("open");
 		$$invalidate(1, isPeerReady = true);
 	});
 
 	peer.on("error", function (err) {
 		console.error(err);
+	});
+
+	peer.on("close", function () {
+		console.log("close");
+	});
+
+	peer.on("disconnected", function () {
+		console.log("disconnected");
 	});
 
 	function input_binding($$value) {
