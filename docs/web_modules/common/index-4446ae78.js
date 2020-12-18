@@ -72,9 +72,6 @@ function destroy_each(iterations, detaching) {
 function element(name) {
     return document.createElement(name);
 }
-function svg_element(name) {
-    return document.createElementNS('http://www.w3.org/2000/svg', name);
-}
 function text(data) {
     return document.createTextNode(data);
 }
@@ -93,9 +90,6 @@ function attr(node, attribute, value) {
         node.removeAttribute(attribute);
     else if (node.getAttribute(attribute) !== value)
         node.setAttribute(attribute, value);
-}
-function xlink_attr(node, attribute, value) {
-    node.setAttributeNS('http://www.w3.org/1999/xlink', attribute, value);
 }
 function children(element) {
     return Array.from(element.childNodes);
@@ -187,25 +181,11 @@ function get_current_component() {
         throw new Error('Function called outside component initialization');
     return current_component;
 }
-function onMount(fn) {
-    get_current_component().$$.on_mount.push(fn);
+function beforeUpdate(fn) {
+    get_current_component().$$.before_update.push(fn);
 }
 function afterUpdate(fn) {
     get_current_component().$$.after_update.push(fn);
-}
-function createEventDispatcher() {
-    const component = get_current_component();
-    return (type, detail) => {
-        const callbacks = component.$$.callbacks[type];
-        if (callbacks) {
-            // TODO are there situations where events could be dispatched
-            // in a server (non-DOM) environment?
-            const event = custom_event(type, detail);
-            callbacks.slice().forEach(fn => {
-                fn.call(component, event);
-            });
-        }
-    };
 }
 
 const dirty_components = [];
@@ -323,6 +303,68 @@ function transition_out(block, local, detach, callback) {
     }
 }
 const null_transition = { duration: 0 };
+function create_in_transition(node, fn, params) {
+    let config = fn(node, params);
+    let running = false;
+    let animation_name;
+    let task;
+    let uid = 0;
+    function cleanup() {
+        if (animation_name)
+            delete_rule(node, animation_name);
+    }
+    function go() {
+        const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+        if (css)
+            animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
+        tick(0, 1);
+        const start_time = now() + delay;
+        const end_time = start_time + duration;
+        if (task)
+            task.abort();
+        running = true;
+        add_render_callback(() => dispatch(node, true, 'start'));
+        task = loop(now => {
+            if (running) {
+                if (now >= end_time) {
+                    tick(1, 0);
+                    dispatch(node, true, 'end');
+                    cleanup();
+                    return running = false;
+                }
+                if (now >= start_time) {
+                    const t = easing((now - start_time) / duration);
+                    tick(t, 1 - t);
+                }
+            }
+            return running;
+        });
+    }
+    let started = false;
+    return {
+        start() {
+            if (started)
+                return;
+            delete_rule(node);
+            if (is_function(config)) {
+                config = config();
+                wait().then(go);
+            }
+            else {
+                go();
+            }
+        },
+        invalidate() {
+            started = false;
+        },
+        end() {
+            if (running) {
+                cleanup();
+                running = false;
+            }
+        }
+    };
+}
 function create_bidirectional_transition(node, fn, params, intro) {
     let config = fn(node, params);
     let t = intro ? 0 : 1;
@@ -550,4 +592,4 @@ class SvelteComponent {
     }
 }
 
-export { xlink_attr as A, create_component as B, destroy_component as C, empty as D, mount_component as E, noop as F, identity as G, SvelteComponent as S, afterUpdate as a, add_render_callback as b, createEventDispatcher as c, append as d, attr as e, binding_callbacks as f, check_outros as g, create_bidirectional_transition as h, destroy_each as i, detach as j, element as k, group_outros as l, init as m, insert as n, onMount as o, listen as p, set_data as q, run_all as r, safe_not_equal as s, set_input_value as t, space as u, svg_element as v, text as w, toggle_class as x, transition_in as y, transition_out as z };
+export { create_in_transition as A, run_all as B, set_input_value as C, toggle_class as D, identity as E, SvelteComponent as S, afterUpdate as a, beforeUpdate as b, attr as c, check_outros as d, create_component as e, destroy_component as f, destroy_each as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, mount_component as n, noop as o, transition_out as p, add_render_callback as q, append as r, safe_not_equal as s, transition_in as t, binding_callbacks as u, create_bidirectional_transition as v, listen as w, set_data as x, space as y, text as z };

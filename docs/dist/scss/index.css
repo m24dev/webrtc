@@ -7403,6 +7403,7 @@ a.text-dark:hover, a.text-dark:focus {
 
 .wrap {
   position: relative;
+  overflow: hidden;
   height: 100vh;
 }
 
@@ -7421,4 +7422,28 @@ a.text-dark:hover, a.text-dark:focus {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.popup {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 500px;
+  max-width: 100%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.video video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }

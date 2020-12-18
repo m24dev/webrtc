@@ -1,67 +1,64 @@
 <style type="text/scss">
-    .input-start {
+    .buttons {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 300px;
-        transform: translate(-50%, -50%);
-        z-index: 100;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        .btn {
+            width: 80px;
+            height: 80px;
+            font-size: 40px;
+        }
+        &_answered {
+            .btn:not(.btn_selected) {
+                opacity: .5;
+            }
+            :global(.btn_selected) {
+                box-shadow: 0 0 0 10px yellow;
+            }
+        }
     }
 </style>
 
 <script>
-    import { afterUpdate } from 'svelte';
-    import { fade } from 'svelte/transition';
+    import { beforeUpdate, afterUpdate } from 'svelte';
+    import { fade, fly } from 'svelte/transition';
     import Peer from 'peerjs';
-    import Connection from './Connection.svelte';
     import settings from './settings';
 
     const query = new URLSearchParams(location.search);
     const outID = `operator${query.get('id')}`;
 
-    afterUpdate(() => {
-        if (isPeerReady && !isDataConnectionStarted) {
-            inputName.focus();
-        }
-	});
-
     const peer = new Peer(settings.callOptions);
 
-    let inputName;
     let isPeerReady = false;
-    let isClosed = false;
-    let username;
-    let isDataConnectionStarted = false;
-    let isMediaConnectionStarted = false;
+    let isDisconnected = false;
+    let isMediaReady = false;
+    let isMediaStarted = false;
+    let isAnswered = false;
     let dataConnection;
     let mediaConnection;
+    let username;
+    let inputName;
+    let video;
 
-    // Older browsers might not implement mediaDevices at all, so we set an empty object first
-    if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
-    }
+    beforeUpdate(() => {
+        
+	});
 
-    // Some browsers partially implement mediaDevices. We can't just assign an object
-    // with getUserMedia as it would overwrite existing properties.
-    // Here, we will just add the getUserMedia property if it's missing.
-    if (navigator.mediaDevices.getUserMedia === undefined) {
-        navigator.mediaDevices.getUserMedia = function(constraints) {
-
-            // First get ahold of the legacy getUserMedia, if present
-            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-            // Some browsers just don't implement it - return a rejected promise with an error
-            // to keep a consistent interface
-            if (!getUserMedia) {
-            return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-            }
-
-            // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-            return new Promise(function(resolve, reject) {
-            getUserMedia.call(navigator, constraints, resolve, reject);
-            });
+    afterUpdate(() => {
+        if (isPeerReady && !isMediaReady) {
+            inputName.focus();
         }
-    }
+
+        if (isMediaReady && !isMediaStarted) {
+            video.srcObject = mediaConnection.localStream;
+            video.onloadedmetadata = () => {
+                video.play();
+                isMediaStarted = true;
+            };
+        }
+	});
 
     function makeConnection(e) {
         if (e.type === 'keypress' && e.keyCode != 13) return;
@@ -73,25 +70,50 @@
                         username: username
                     }
                 });
-                if (dataConnection) {
-                    isDataConnectionStarted = true;
-                }
-                
+                dataConnection.on('data', handleData);
+                dataConnection.on('close', () => {
+                    
+                });
+                dataConnection.on('error', err => {
+                    console.log(err);
+                });
+
                 mediaConnection = peer.call(outID, mediaStream);
-                if (mediaConnection) {
-                    isMediaConnectionStarted = true;
-                }
+                mediaConnection.on('error', (err) => {
+                    console.error(err);
+                });
+
+                isMediaReady = true;
             })
             .catch(function (err) {
-                alert.log(err.name + ": " + err.message);
+                console.log(err.name + ": " + err.message);
             });
     }
 
-    function onConneсtionClose() {
-        isClosed = true;
+    function handleAnswer(e) {
+        const selectedClass = 'btn_selected';
+        const $el = e.target;
+        if ($el.classList.contains('btn')) {
+            $el.classList.add(selectedClass);
+            let data = {
+                answer: $el.dataset.answer
+            }
+            dataConnection.send(data);
+    
+            isAnswered = true;
+    
+            setTimeout(() => {
+                $el.classList.remove(selectedClass);
+                isAnswered = false;
+            }, 3000);
+        }
     }
 
-    peer.on('open', function(id){
+    function handleData(data) {
+        console.log(data);
+    }
+
+    peer.on('open', function(){
         console.log('open');
         isPeerReady = true;
     });
@@ -107,15 +129,32 @@
 </script>
 
 {#if isPeerReady}
-    {#if !(isDataConnectionStarted && isMediaConnectionStarted)}
-        <div class="input-start input-group" transition:fade>
-            <input type="text" class="form-control" placeholder="Ваше имя" aria-label="Ваше имя" bind:this={inputName} bind:value={username} on:keypress={makeConnection}>
-            <div class="input-group-append">
-                <button type="button" class="btn btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
+    {#if isMediaReady}
+        <div class="video" transition:fade>
+            <video bind:this={video}></video>
+        </div>
+        <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer}>
+            <div class="p-4 d-flex justify-content-around">
+                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="А" in:fly="{{y: 100, opacity: 0}}">A</button>
+                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="Б" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
+                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="В" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
+                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="Г" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
             </div>
         </div>
+        {#if isDisconnected}
+            <div class="popup p-4" transition:fade>
+                <div class="alert alert-warning text-center">Соединение закрыто</div>
+            </div>
+        {/if}
     {:else}
-        <Connection username={username} dataConnection={dataConnection} mediaConnection={mediaConnection} closed={isClosed} on:close={onConneсtionClose} />
+        <div class="popup" transition:fade>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Ваше имя" aria-label="Ваше имя" bind:this={inputName} bind:value={username} on:keypress={makeConnection}>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
+                </div>
+            </div>
+        </div>
     {/if}
 {:else}
     <div class="loader">

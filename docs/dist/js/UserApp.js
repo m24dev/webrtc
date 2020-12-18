@@ -8,8 +8,7 @@ import {
 	binding_callbacks,
 	check_outros,
 	create_bidirectional_transition,
-	create_component,
-	destroy_component,
+	create_in_transition,
 	detach,
 	element,
 	empty,
@@ -17,20 +16,20 @@ import {
 	init,
 	insert,
 	listen,
-	mount_component,
 	noop,
 	run_all,
 	safe_not_equal,
 	set_input_value,
 	space,
+	text,
+	toggle_class,
 	transition_in,
 	transition_out
 } from "../../web_modules/svelte/internal.js";
 
-import { afterUpdate } from "../../web_modules/svelte.js";
-import { fade } from "../../web_modules/svelte/transition.js";
+import { beforeUpdate, afterUpdate } from "../../web_modules/svelte.js";
+import { fade, fly } from "../../web_modules/svelte/transition.js";
 import Peer from "../../web_modules/peerjs.js";
-import Connection from "./Connection.js";
 import settings from "./settings.js";
 
 function create_else_block_1(ctx) {
@@ -54,7 +53,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (107:0) {#if isPeerReady}
+// (127:0) {#if isPeerReady}
 function create_if_block(ctx) {
 	let current_block_type_index;
 	let if_block;
@@ -64,7 +63,7 @@ function create_if_block(ctx) {
 	const if_blocks = [];
 
 	function select_block_type_1(ctx, dirty) {
-		if (!(/*isDataConnectionStarted*/ ctx[4] && /*isMediaConnectionStarted*/ ctx[5])) return 0;
+		if (/*isMediaReady*/ ctx[1]) return 0;
 		return 1;
 	}
 
@@ -124,67 +123,22 @@ function create_if_block(ctx) {
 	};
 }
 
-// (115:4) {:else}
+// (145:4) {:else}
 function create_else_block(ctx) {
-	let connection;
-	let current;
-
-	connection = new Connection({
-			props: {
-				username: /*username*/ ctx[3],
-				dataConnection: /*dataConnection*/ ctx[6],
-				mediaConnection: /*mediaConnection*/ ctx[7],
-				closed: /*isClosed*/ ctx[2]
-			}
-		});
-
-	connection.$on("close", /*onConneсtionClose*/ ctx[9]);
-
-	return {
-		c() {
-			create_component(connection.$$.fragment);
-		},
-		m(target, anchor) {
-			mount_component(connection, target, anchor);
-			current = true;
-		},
-		p(ctx, dirty) {
-			const connection_changes = {};
-			if (dirty & /*username*/ 8) connection_changes.username = /*username*/ ctx[3];
-			if (dirty & /*dataConnection*/ 64) connection_changes.dataConnection = /*dataConnection*/ ctx[6];
-			if (dirty & /*mediaConnection*/ 128) connection_changes.mediaConnection = /*mediaConnection*/ ctx[7];
-			if (dirty & /*isClosed*/ 4) connection_changes.closed = /*isClosed*/ ctx[2];
-			connection.$set(connection_changes);
-		},
-		i(local) {
-			if (current) return;
-			transition_in(connection.$$.fragment, local);
-			current = true;
-		},
-		o(local) {
-			transition_out(connection.$$.fragment, local);
-			current = false;
-		},
-		d(detaching) {
-			destroy_component(connection, detaching);
-		}
-	};
-}
-
-// (108:4) {#if !(isDataConnectionStarted && isMediaConnectionStarted)}
-function create_if_block_1(ctx) {
+	let div2;
 	let div1;
 	let input;
 	let t0;
 	let div0;
 	let button;
-	let div1_transition;
+	let div2_transition;
 	let current;
 	let mounted;
 	let dispose;
 
 	return {
 		c() {
+			div2 = element("div");
 			div1 = element("div");
 			input = element("input");
 			t0 = space();
@@ -198,12 +152,14 @@ function create_if_block_1(ctx) {
 			attr(button, "type", "button");
 			attr(button, "class", "btn btn-primary shadow-sm");
 			attr(div0, "class", "input-group-append");
-			attr(div1, "class", "input-start input-group svelte-1jj00aa");
+			attr(div1, "class", "input-group");
+			attr(div2, "class", "popup");
 		},
 		m(target, anchor) {
-			insert(target, div1, anchor);
+			insert(target, div2, anchor);
+			append(div2, div1);
 			append(div1, input);
-			/*input_binding*/ ctx[10](input);
+			/*input_binding*/ ctx[9](input);
 			set_input_value(input, /*username*/ ctx[3]);
 			append(div1, t0);
 			append(div1, div0);
@@ -212,9 +168,9 @@ function create_if_block_1(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(input, "input", /*input_input_handler*/ ctx[11]),
-					listen(input, "keypress", /*makeConnection*/ ctx[8]),
-					listen(button, "click", /*makeConnection*/ ctx[8])
+					listen(input, "input", /*input_input_handler*/ ctx[10]),
+					listen(input, "keypress", /*makeConnection*/ ctx[6]),
+					listen(button, "click", /*makeConnection*/ ctx[6])
 				];
 
 				mounted = true;
@@ -224,6 +180,228 @@ function create_if_block_1(ctx) {
 			if (dirty & /*username*/ 8 && input.value !== /*username*/ ctx[3]) {
 				set_input_value(input, /*username*/ ctx[3]);
 			}
+		},
+		i(local) {
+			if (current) return;
+
+			add_render_callback(() => {
+				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, true);
+				div2_transition.run(1);
+			});
+
+			current = true;
+		},
+		o(local) {
+			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, fade, {}, false);
+			div2_transition.run(0);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(div2);
+			/*input_binding*/ ctx[9](null);
+			if (detaching && div2_transition) div2_transition.end();
+			mounted = false;
+			run_all(dispose);
+		}
+	};
+}
+
+// (128:4) {#if isMediaReady}
+function create_if_block_1(ctx) {
+	let div0;
+	let video_1;
+	let div0_transition;
+	let t0;
+	let div2;
+	let div1;
+	let button0;
+	let t1;
+	let button0_intro;
+	let t2;
+	let button1;
+	let t3;
+	let button1_intro;
+	let t4;
+	let button2;
+	let t5;
+	let button2_intro;
+	let t6;
+	let button3;
+	let t7;
+	let button3_intro;
+	let t8;
+	let if_block_anchor;
+	let current;
+	let mounted;
+	let dispose;
+	let if_block = isDisconnected && create_if_block_2(ctx);
+
+	return {
+		c() {
+			div0 = element("div");
+			video_1 = element("video");
+			t0 = space();
+			div2 = element("div");
+			div1 = element("div");
+			button0 = element("button");
+			t1 = text("A");
+			t2 = space();
+			button1 = element("button");
+			t3 = text("Б");
+			t4 = space();
+			button2 = element("button");
+			t5 = text("В");
+			t6 = space();
+			button3 = element("button");
+			t7 = text("Г");
+			t8 = space();
+			if (if_block) if_block.c();
+			if_block_anchor = empty();
+			attr(div0, "class", "video");
+			attr(button0, "type", "button");
+			attr(button0, "class", "btn btn-primary svelte-13lqtc1");
+			attr(button0, "diabled", /*isAnswered*/ ctx[2]);
+			attr(button0, "data-answer", "А");
+			attr(button1, "type", "button");
+			attr(button1, "class", "btn btn-primary svelte-13lqtc1");
+			attr(button1, "diabled", /*isAnswered*/ ctx[2]);
+			attr(button1, "data-answer", "Б");
+			attr(button2, "type", "button");
+			attr(button2, "class", "btn btn-primary svelte-13lqtc1");
+			attr(button2, "diabled", /*isAnswered*/ ctx[2]);
+			attr(button2, "data-answer", "В");
+			attr(button3, "type", "button");
+			attr(button3, "class", "btn btn-primary svelte-13lqtc1");
+			attr(button3, "diabled", /*isAnswered*/ ctx[2]);
+			attr(button3, "data-answer", "Г");
+			attr(div1, "class", "p-4 d-flex justify-content-around");
+			attr(div2, "class", "buttons svelte-13lqtc1");
+			toggle_class(div2, "buttons_answered", /*isAnswered*/ ctx[2]);
+		},
+		m(target, anchor) {
+			insert(target, div0, anchor);
+			append(div0, video_1);
+			/*video_1_binding*/ ctx[8](video_1);
+			insert(target, t0, anchor);
+			insert(target, div2, anchor);
+			append(div2, div1);
+			append(div1, button0);
+			append(button0, t1);
+			append(div1, t2);
+			append(div1, button1);
+			append(button1, t3);
+			append(div1, t4);
+			append(div1, button2);
+			append(button2, t5);
+			append(div1, t6);
+			append(div1, button3);
+			append(button3, t7);
+			insert(target, t8, anchor);
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+			current = true;
+
+			if (!mounted) {
+				dispose = listen(div2, "click", /*handleAnswer*/ ctx[7]);
+				mounted = true;
+			}
+		},
+		p(ctx, dirty) {
+			if (!current || dirty & /*isAnswered*/ 4) {
+				attr(button0, "diabled", /*isAnswered*/ ctx[2]);
+			}
+
+			if (!current || dirty & /*isAnswered*/ 4) {
+				attr(button1, "diabled", /*isAnswered*/ ctx[2]);
+			}
+
+			if (!current || dirty & /*isAnswered*/ 4) {
+				attr(button2, "diabled", /*isAnswered*/ ctx[2]);
+			}
+
+			if (!current || dirty & /*isAnswered*/ 4) {
+				attr(button3, "diabled", /*isAnswered*/ ctx[2]);
+			}
+
+			if (dirty & /*isAnswered*/ 4) {
+				toggle_class(div2, "buttons_answered", /*isAnswered*/ ctx[2]);
+			}
+		},
+		i(local) {
+			if (current) return;
+
+			add_render_callback(() => {
+				if (!div0_transition) div0_transition = create_bidirectional_transition(div0, fade, {}, true);
+				div0_transition.run(1);
+			});
+
+			if (!button0_intro) {
+				add_render_callback(() => {
+					button0_intro = create_in_transition(button0, fly, { y: 100, opacity: 0 });
+					button0_intro.start();
+				});
+			}
+
+			if (!button1_intro) {
+				add_render_callback(() => {
+					button1_intro = create_in_transition(button1, fly, { y: 100, opacity: 0, delay: 100 });
+					button1_intro.start();
+				});
+			}
+
+			if (!button2_intro) {
+				add_render_callback(() => {
+					button2_intro = create_in_transition(button2, fly, { y: 100, opacity: 0, delay: 200 });
+					button2_intro.start();
+				});
+			}
+
+			if (!button3_intro) {
+				add_render_callback(() => {
+					button3_intro = create_in_transition(button3, fly, { y: 100, opacity: 0, delay: 300 });
+					button3_intro.start();
+				});
+			}
+
+			transition_in(if_block);
+			current = true;
+		},
+		o(local) {
+			if (!div0_transition) div0_transition = create_bidirectional_transition(div0, fade, {}, false);
+			div0_transition.run(0);
+			transition_out(if_block);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(div0);
+			/*video_1_binding*/ ctx[8](null);
+			if (detaching && div0_transition) div0_transition.end();
+			if (detaching) detach(t0);
+			if (detaching) detach(div2);
+			if (detaching) detach(t8);
+			if (if_block) if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (140:8) {#if isDisconnected}
+function create_if_block_2(ctx) {
+	let div1;
+	let div1_transition;
+	let current;
+
+	return {
+		c() {
+			div1 = element("div");
+			div1.innerHTML = `<div class="alert alert-warning text-center">Соединение закрыто</div>`;
+			attr(div1, "class", "popup p-4");
+		},
+		m(target, anchor) {
+			insert(target, div1, anchor);
+			current = true;
 		},
 		i(local) {
 			if (current) return;
@@ -242,10 +420,7 @@ function create_if_block_1(ctx) {
 		},
 		d(detaching) {
 			if (detaching) detach(div1);
-			/*input_binding*/ ctx[10](null);
 			if (detaching && div1_transition) div1_transition.end();
-			mounted = false;
-			run_all(dispose);
 		}
 	};
 }
@@ -259,7 +434,7 @@ function create_fragment(ctx) {
 	const if_blocks = [];
 
 	function select_block_type(ctx, dirty) {
-		if (/*isPeerReady*/ ctx[1]) return 0;
+		if (/*isPeerReady*/ ctx[0]) return 0;
 		return 1;
 	}
 
@@ -319,79 +494,99 @@ function create_fragment(ctx) {
 	};
 }
 
+let isDisconnected = false;
+
+function handleData(data) {
+	console.log(data);
+}
+
 function instance($$self, $$props, $$invalidate) {
 	const query = new URLSearchParams(location.search);
 	const outID = `operator${query.get("id")}`;
-
-	afterUpdate(() => {
-		if (isPeerReady && !isDataConnectionStarted) {
-			inputName.focus();
-		}
-	});
-
 	const peer = new Peer(settings.callOptions);
-	let inputName;
 	let isPeerReady = false;
-	let isClosed = false;
-	let username;
-	let isDataConnectionStarted = false;
-	let isMediaConnectionStarted = false;
+	let isMediaReady = false;
+	let isMediaStarted = false;
+	let isAnswered = false;
 	let dataConnection;
 	let mediaConnection;
+	let username;
+	let inputName;
+	let video;
 
-	// Older browsers might not implement mediaDevices at all, so we set an empty object first
-	if (navigator.mediaDevices === undefined) {
-		navigator.mediaDevices = {};
-	}
+	beforeUpdate(() => {
+		
+	});
 
-	// Some browsers partially implement mediaDevices. We can't just assign an object
-	// with getUserMedia as it would overwrite existing properties.
-	// Here, we will just add the getUserMedia property if it's missing.
-	if (navigator.mediaDevices.getUserMedia === undefined) {
-		navigator.mediaDevices.getUserMedia = function (constraints) {
-			// First get ahold of the legacy getUserMedia, if present
-			var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+	afterUpdate(() => {
+		if (isPeerReady && !isMediaReady) {
+			inputName.focus();
+		}
 
-			// Some browsers just don't implement it - return a rejected promise with an error
-			// to keep a consistent interface
-			if (!getUserMedia) {
-				return Promise.reject(new Error("getUserMedia is not implemented in this browser"));
-			}
+		if (isMediaReady && !isMediaStarted) {
+			$$invalidate(5, video.srcObject = mediaConnection.localStream, video);
 
-			// Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-			return new Promise(function (resolve, reject) {
-					getUserMedia.call(navigator, constraints, resolve, reject);
-				});
-		};
-	}
+			$$invalidate(
+				5,
+				video.onloadedmetadata = () => {
+					video.play();
+					isMediaStarted = true;
+				},
+				video
+			);
+		}
+	});
 
 	function makeConnection(e) {
 		if (e.type === "keypress" && e.keyCode != 13) return;
 
 		navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function (mediaStream) {
-			$$invalidate(6, dataConnection = peer.connect(outID, { metadata: { username } }));
+			dataConnection = peer.connect(outID, { metadata: { username } });
+			dataConnection.on("data", handleData);
 
-			if (dataConnection) {
-				$$invalidate(4, isDataConnectionStarted = true);
-			}
+			dataConnection.on("close", () => {
+				
+			});
 
-			$$invalidate(7, mediaConnection = peer.call(outID, mediaStream));
+			dataConnection.on("error", err => {
+				console.log(err);
+			});
 
-			if (mediaConnection) {
-				$$invalidate(5, isMediaConnectionStarted = true);
-			}
+			mediaConnection = peer.call(outID, mediaStream);
+
+			mediaConnection.on("error", err => {
+				console.error(err);
+			});
+
+			$$invalidate(1, isMediaReady = true);
 		}).catch(function (err) {
-			alert.log(err.name + ": " + err.message);
+			console.log(err.name + ": " + err.message);
 		});
 	}
 
-	function onConneсtionClose() {
-		$$invalidate(2, isClosed = true);
+	function handleAnswer(e) {
+		const selectedClass = "btn_selected";
+		const $el = e.target;
+
+		if ($el.classList.contains("btn")) {
+			$el.classList.add(selectedClass);
+			let data = { answer: $el.dataset.answer };
+			dataConnection.send(data);
+			$$invalidate(2, isAnswered = true);
+
+			setTimeout(
+				() => {
+					$el.classList.remove(selectedClass);
+					$$invalidate(2, isAnswered = false);
+				},
+				3000
+			);
+		}
 	}
 
-	peer.on("open", function (id) {
+	peer.on("open", function () {
 		console.log("open");
-		$$invalidate(1, isPeerReady = true);
+		$$invalidate(0, isPeerReady = true);
 	});
 
 	peer.on("error", function (err) {
@@ -406,10 +601,17 @@ function instance($$self, $$props, $$invalidate) {
 		console.log("disconnected");
 	});
 
+	function video_1_binding($$value) {
+		binding_callbacks[$$value ? "unshift" : "push"](() => {
+			video = $$value;
+			$$invalidate(5, video);
+		});
+	}
+
 	function input_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			inputName = $$value;
-			$$invalidate(0, inputName);
+			$$invalidate(4, inputName);
 		});
 	}
 
@@ -419,16 +621,15 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	return [
-		inputName,
 		isPeerReady,
-		isClosed,
+		isMediaReady,
+		isAnswered,
 		username,
-		isDataConnectionStarted,
-		isMediaConnectionStarted,
-		dataConnection,
-		mediaConnection,
+		inputName,
+		video,
 		makeConnection,
-		onConneсtionClose,
+		handleAnswer,
+		video_1_binding,
 		input_binding,
 		input_input_handler
 	];
