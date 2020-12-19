@@ -99,9 +99,6 @@ function set_data(text, data) {
     if (text.wholeText !== data)
         text.data = data;
 }
-function set_input_value(input, value) {
-    input.value = value == null ? '' : value;
-}
 function toggle_class(element, name, toggle) {
     element.classList[toggle ? 'add' : 'remove'](name);
 }
@@ -180,9 +177,6 @@ function get_current_component() {
     if (!current_component)
         throw new Error('Function called outside component initialization');
     return current_component;
-}
-function beforeUpdate(fn) {
-    get_current_component().$$.before_update.push(fn);
 }
 function afterUpdate(fn) {
     get_current_component().$$.after_update.push(fn);
@@ -592,4 +586,4 @@ class SvelteComponent {
     }
 }
 
-export { create_in_transition as A, run_all as B, set_input_value as C, toggle_class as D, identity as E, SvelteComponent as S, afterUpdate as a, beforeUpdate as b, attr as c, check_outros as d, create_component as e, destroy_component as f, destroy_each as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, mount_component as n, noop as o, transition_out as p, add_render_callback as q, append as r, safe_not_equal as s, transition_in as t, binding_callbacks as u, create_bidirectional_transition as v, listen as w, set_data as x, space as y, text as z };
+export { toggle_class as A, identity as B, SvelteComponent as S, afterUpdate as a, attr as b, check_outros as c, create_component as d, destroy_component as e, destroy_each as f, detach as g, element as h, empty as i, group_outros as j, init as k, insert as l, mount_component as m, noop as n, transition_out as o, add_render_callback as p, append as q, binding_callbacks as r, safe_not_equal as s, transition_in as t, create_bidirectional_transition as u, listen as v, set_data as w, space as x, text as y, create_in_transition as z };

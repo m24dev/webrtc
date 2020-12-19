@@ -1,1 +1,1 @@
-export { a as afterUpdate, b as beforeUpdate } from './common/index-4446ae78.js';
+export { a as afterUpdate } from './common/index-4255a21f.js';

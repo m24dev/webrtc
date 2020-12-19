@@ -2,11 +2,11 @@
     .buttons {
         position: absolute;
         left: 0;
-        bottom: 0;
+        bottom: 40px;
         width: 100%;
         .btn {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             font-size: 40px;
         }
         &_answered {
@@ -21,7 +21,7 @@
 </style>
 
 <script>
-    import { beforeUpdate, afterUpdate } from 'svelte';
+    import { afterUpdate } from 'svelte';
     import { fade, fly } from 'svelte/transition';
     import Peer from 'peerjs';
     import settings from './settings';
@@ -29,8 +29,9 @@
     const query = new URLSearchParams(location.search);
     const outID = `operator${query.get('id')}`;
 
-    const peer = new Peer(settings.callOptions);
+    let peer;
 
+    let isStarted = false;
     let isPeerReady = false;
     let isDisconnected = false;
     let isMediaReady = false;
@@ -38,19 +39,9 @@
     let isAnswered = false;
     let dataConnection;
     let mediaConnection;
-    let username;
-    let inputName;
     let video;
 
-    beforeUpdate(() => {
-        
-	});
-
     afterUpdate(() => {
-        if (isPeerReady && !isMediaReady) {
-            inputName.focus();
-        }
-
         if (isMediaReady && !isMediaStarted) {
             video.srcObject = mediaConnection.localStream;
             video.onloadedmetadata = () => {
@@ -60,16 +51,32 @@
         }
 	});
 
-    function makeConnection(e) {
-        if (e.type === 'keypress' && e.keyCode != 13) return;
+    function makeConnection() {
+        isStarted = true;
 
+        peer = new Peer(settings.callOptions);
+
+        peer.on('open', function(){
+            console.log('open');
+            isPeerReady = true;
+
+            getMedia();
+        });
+        peer.on('error', function(err){
+            console.error(err);
+        });
+        peer.on('close', function(){
+            console.log('close');
+        });
+        peer.on('disconnected', function(){
+            console.log('disconnected');
+        });
+    }
+
+    function getMedia() {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true })
             .then(function(mediaStream) {
-                dataConnection = peer.connect(outID, {
-                    metadata: {
-                        username: username
-                    }
-                });
+                dataConnection = peer.connect(outID);
                 dataConnection.on('data', handleData);
                 dataConnection.on('close', () => {
                     
@@ -93,7 +100,7 @@
     function handleAnswer(e) {
         const selectedClass = 'btn_selected';
         const $el = e.target;
-        if ($el.classList.contains('btn')) {
+        if ($el.classList.contains('btn') && !isAnswered) {
             $el.classList.add(selectedClass);
             let data = {
                 answer: $el.dataset.answer
@@ -112,54 +119,37 @@
     function handleData(data) {
         console.log(data);
     }
-
-    peer.on('open', function(){
-        console.log('open');
-        isPeerReady = true;
-    });
-    peer.on('error', function(err){
-        console.error(err);
-    });
-    peer.on('close', function(){
-        console.log('close');
-    });
-    peer.on('disconnected', function(){
-        console.log('disconnected');
-    });
 </script>
 
 {#if isPeerReady}
+    <div class="video" transition:fade>
+        <video bind:this={video}></video>
+    </div>
     {#if isMediaReady}
-        <div class="video" transition:fade>
-            <video bind:this={video}></video>
-        </div>
         <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer}>
             <div class="p-4 d-flex justify-content-around">
-                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="А" in:fly="{{y: 100, opacity: 0}}">A</button>
-                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="Б" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
-                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="В" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
-                <button type="button" class="btn btn-primary" diabled={isAnswered} data-answer="Г" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
-            </div>
-        </div>
-        {#if isDisconnected}
-            <div class="popup p-4" transition:fade>
-                <div class="alert alert-warning text-center">Соединение закрыто</div>
-            </div>
-        {/if}
-    {:else}
-        <div class="popup" transition:fade>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Ваше имя" aria-label="Ваше имя" bind:this={inputName} bind:value={username} on:keypress={makeConnection}>
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
-                </div>
+                <button type="button" class="btn btn-primary" data-answer="А" in:fly="{{y: 100, opacity: 0}}">A</button>
+                <button type="button" class="btn btn-primary" data-answer="Б" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
+                <button type="button" class="btn btn-primary" data-answer="В" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
+                <button type="button" class="btn btn-primary" data-answer="Г" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
             </div>
         </div>
     {/if}
-{:else}
-    <div class="loader">
-        <div class="spinner-border text-primary">
-            <span class="sr-only">Loading...</span>
+    {#if isDisconnected}
+        <div class="popup p-4" transition:fade>
+            <div class="alert alert-warning text-center">Соединение закрыто</div>
         </div>
-    </div>
+    {/if}
+{:else}
+    {#if isStarted}
+        <div class="loader">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    {:else}
+        <div class="popup">
+            <button type="button" class="btn btn-lg btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
+        </div>
+    {/if}
 {/if}

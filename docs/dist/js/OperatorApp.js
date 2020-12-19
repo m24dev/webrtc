@@ -438,10 +438,10 @@ function instance($$self, $$props, $$invalidate) {
 			$$invalidate(1, isPeerReady = true);
 		});
 
-		peer.on("connection", function (dataConnection) {
+		peer.on("connection", function (conn) {
 			console.log("connection");
-			dataConnection = dataConnection;
-			remotePeer = dataConnection.peer;
+			dataConnection = conn;
+			remotePeer = conn.peer;
 			dataConnection.on("data", handleData);
 
 			dataConnection.on("close", () => {
@@ -453,11 +453,11 @@ function instance($$self, $$props, $$invalidate) {
 			});
 		});
 
-		peer.on("call", function (mediaConnection) {
+		peer.on("call", function (conn) {
 			console.log("call");
 
-			if (remotePeer === mediaConnection.peer) {
-				mediaConnection = mediaConnection;
+			if (remotePeer === conn.peer) {
+				mediaConnection = conn;
 
 				mediaConnection.on("stream", stream => {
 					if (remoteStream) return false;
