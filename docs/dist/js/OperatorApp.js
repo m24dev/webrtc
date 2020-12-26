@@ -71,7 +71,7 @@ function create_if_block_4(ctx) {
 	return {
 		c() {
 			div1 = element("div");
-			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Loading...</span></div>`;
+			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Загрузка...</span></div>`;
 			attr(div1, "class", "loader");
 		},
 		m(target, anchor) {

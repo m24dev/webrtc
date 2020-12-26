@@ -27,7 +27,9 @@
     import settings from './settings';
 
     const query = new URLSearchParams(location.search);
-    const outID = `operator${query.get('id')}`;
+    const adminID = 'admin';
+    const multiscreenID = 'multiscreen';
+    const operatorID = `operator${query.get('id')}`;
 
     let peer;
 
@@ -37,13 +39,17 @@
     let isMediaReady = false;
     let isMediaStarted = false;
     let isAnswered = false;
-    let dataConnection;
-    let mediaConnection;
+    let adminDataConnection;
+    let adminMediaConnection;
+    let operatorDataConnection;
+    let operatorMediaConnection;
+    let multiscreenMediaConnection;
     let video;
+    let stream;
 
     afterUpdate(() => {
         if (isMediaReady && !isMediaStarted) {
-            video.srcObject = mediaConnection.localStream;
+            video.srcObject = stream;
             video.onloadedmetadata = () => {
                 video.play();
                 isMediaStarted = true;
@@ -74,27 +80,57 @@
     }
 
     function getMedia() {
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        navigator.mediaDevices.getUserMedia({ audio: true, video: {
+            width: { max: 720 },
+            height: { max: 576 },
+            frameRate: { ideal: 10 }
+        }})
             .then(function(mediaStream) {
-                dataConnection = peer.connect(outID);
-                dataConnection.on('data', handleData);
-                dataConnection.on('close', () => {
-                    
-                });
-                dataConnection.on('error', err => {
-                    console.log(err);
-                });
+                stream = mediaStream;
 
-                mediaConnection = peer.call(outID, mediaStream);
-                mediaConnection.on('error', (err) => {
-                    console.error(err);
-                });
+                // adminDataConnection = peer.connect(adminID);
+                // setDataConnectionCallbacks(adminDataConnection);
+
+                // adminMediaConnection = peer.call(adminID, stream);
+                // setMediaConnectionCallbacks(adminMediaConnection);
+
+                connectToOperator();
+                connectToMultiscreen();
 
                 isMediaReady = true;
             })
             .catch(function (err) {
                 console.log(err.name + ": " + err.message);
             });
+    }
+
+    function setDataConnectionCallbacks(conn) {
+        conn.on('data', handleData);
+        conn.on('close', () => {
+            
+        });
+        conn.on('error', err => {
+            console.log(err);
+        });
+    }
+
+    function setMediaConnectionCallbacks(conn) {
+        conn.on('error', err => {
+            console.log(err);
+        });
+    }
+
+    function connectToOperator() {
+        operatorDataConnection = peer.connect(operatorID);
+        setDataConnectionCallbacks(operatorDataConnection);
+
+        operatorMediaConnection = peer.call(operatorID, stream);
+        setMediaConnectionCallbacks(operatorMediaConnection);
+    }
+
+    function connectToMultiscreen() {
+        multiscreenMediaConnection = peer.call(multiscreenID, stream);
+        setMediaConnectionCallbacks(multiscreenMediaConnection);
     }
 
     function handleAnswer(e) {
@@ -105,7 +141,7 @@
             let data = {
                 answer: $el.dataset.answer
             }
-            dataConnection.send(data);
+            operatorDataConnection.send(data);
     
             isAnswered = true;
     
@@ -123,7 +159,7 @@
 
 {#if isPeerReady}
     <div class="video" transition:fade>
-        <video bind:this={video}></video>
+        <video muted bind:this={video}></video>
     </div>
     {#if isMediaReady}
         <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer}>
@@ -144,7 +180,7 @@
     {#if isStarted}
         <div class="loader">
             <div class="spinner-border text-primary">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">Загрузка...</span>
             </div>
         </div>
     {:else}

@@ -1,11 +1,15 @@
 <style type="text/scss">
+    .multiscreen {
+        display: flex;
+        flex-wrap: wrap;
+    }
 </style>
 <script>
     import Peer from 'peerjs';
     import settings from './settings';
-    import AdminUser from './AdminUser.svelte';
+    import MultiscreenUser from './MultiscreenUser.svelte';
 
-    const peer = new Peer('admin', settings.callOptions);
+    const peer = new Peer('multiscreen', settings.callOptions);
 
     let isPeerReady = false;
     let users = [];
@@ -23,24 +27,12 @@
         console.log('open');
         isPeerReady = true;
     });
-    peer.on('connection', function (conn) {
-        console.log('connection');
-        users = [...users, {
-            dataConnection: conn,
-            peer: conn.peer
-        }];
-    });
     peer.on('call', function(conn) {
         console.log('call');
-        users = users.map(user => {
-            if (user.peer === conn.peer) {
-                conn.on('stream', stream => {
-                    playVideo(user);
-                });
-                return {...user, mediaConnection: conn};
-            }
-            return user;
-        });
+        users = [...users, {
+            mediaConnection: conn,
+            peer: conn.peer
+        }];
     });
     peer.on('error', function(err){
         console.error(err);
@@ -52,9 +44,11 @@
 
 {#if isPeerReady}
     {#if users.length}
-        <div class="users">
+        <div class="multiscreen">
             {#each users as user}
-                <AdminUser user={user} onClose={handleClose} />
+                {#if user.mediaConnection}
+                    <MultiscreenUser user={user} onClose={handleClose} />
+                {/if}
             {/each}
         </div>
     {:else}

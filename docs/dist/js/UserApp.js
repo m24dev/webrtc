@@ -64,14 +64,14 @@ function create_else_block(ctx) {
 	};
 }
 
-// (140:4) {#if isStarted}
+// (176:4) {#if isStarted}
 function create_if_block_3(ctx) {
 	let div1;
 
 	return {
 		c() {
 			div1 = element("div");
-			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Loading...</span></div>`;
+			div1.innerHTML = `<div class="spinner-border text-primary"><span class="sr-only">Загрузка...</span></div>`;
 			attr(div1, "class", "loader");
 		},
 		m(target, anchor) {
@@ -86,7 +86,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (120:0) {#if isPeerReady}
+// (156:0) {#if isPeerReady}
 function create_if_block(ctx) {
 	let div;
 	let video_1;
@@ -107,6 +107,7 @@ function create_if_block(ctx) {
 			t1 = space();
 			if (if_block1) if_block1.c();
 			if_block1_anchor = empty();
+			video_1.muted = true;
 			attr(div, "class", "video");
 		},
 		m(target, anchor) {
@@ -170,7 +171,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (124:4) {#if isMediaReady}
+// (160:4) {#if isMediaReady}
 function create_if_block_2(ctx) {
 	let div1;
 	let div0;
@@ -278,7 +279,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (134:4) {#if isDisconnected}
+// (170:4) {#if isDisconnected}
 function create_if_block_1(ctx) {
 	let div1;
 	let div1_transition;
@@ -386,7 +387,27 @@ function create_fragment(ctx) {
 	};
 }
 
+const adminID = "admin";
+const multiscreenID = "multiscreen";
 let isDisconnected = false;
+
+function setDataConnectionCallbacks(conn) {
+	conn.on("data", handleData);
+
+	conn.on("close", () => {
+		
+	});
+
+	conn.on("error", err => {
+		console.log(err);
+	});
+}
+
+function setMediaConnectionCallbacks(conn) {
+	conn.on("error", err => {
+		console.log(err);
+	});
+}
 
 function handleData(data) {
 	console.log(data);
@@ -394,20 +415,24 @@ function handleData(data) {
 
 function instance($$self, $$props, $$invalidate) {
 	const query = new URLSearchParams(location.search);
-	const outID = `operator${query.get("id")}`;
+	const operatorID = `operator${query.get("id")}`;
 	let peer;
 	let isStarted = false;
 	let isPeerReady = false;
 	let isMediaReady = false;
 	let isMediaStarted = false;
 	let isAnswered = false;
-	let dataConnection;
-	let mediaConnection;
+	let adminDataConnection;
+	let adminMediaConnection;
+	let operatorDataConnection;
+	let operatorMediaConnection;
+	let multiscreenMediaConnection;
 	let video;
+	let stream;
 
 	afterUpdate(() => {
 		if (isMediaReady && !isMediaStarted) {
-			$$invalidate(4, video.srcObject = mediaConnection.localStream, video);
+			$$invalidate(4, video.srcObject = stream, video);
 
 			$$invalidate(
 				4,
@@ -444,28 +469,39 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	function getMedia() {
-		navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function (mediaStream) {
-			dataConnection = peer.connect(outID);
-			dataConnection.on("data", handleData);
+		navigator.mediaDevices.getUserMedia({
+			audio: true,
+			video: {
+				width: { max: 720 },
+				height: { max: 576 },
+				frameRate: { ideal: 10 }
+			}
+		}).then(function (mediaStream) {
+			stream = mediaStream;
 
-			dataConnection.on("close", () => {
-				
-			});
+			// adminDataConnection = peer.connect(adminID);
+			// setDataConnectionCallbacks(adminDataConnection);
+			// adminMediaConnection = peer.call(adminID, stream);
+			// setMediaConnectionCallbacks(adminMediaConnection);
+			connectToOperator();
 
-			dataConnection.on("error", err => {
-				console.log(err);
-			});
-
-			mediaConnection = peer.call(outID, mediaStream);
-
-			mediaConnection.on("error", err => {
-				console.error(err);
-			});
-
+			connectToMultiscreen();
 			$$invalidate(2, isMediaReady = true);
 		}).catch(function (err) {
 			console.log(err.name + ": " + err.message);
 		});
+	}
+
+	function connectToOperator() {
+		operatorDataConnection = peer.connect(operatorID);
+		setDataConnectionCallbacks(operatorDataConnection);
+		operatorMediaConnection = peer.call(operatorID, stream);
+		setMediaConnectionCallbacks(operatorMediaConnection);
+	}
+
+	function connectToMultiscreen() {
+		multiscreenMediaConnection = peer.call(multiscreenID, stream);
+		setMediaConnectionCallbacks(multiscreenMediaConnection);
 	}
 
 	function handleAnswer(e) {
@@ -475,7 +511,7 @@ function instance($$self, $$props, $$invalidate) {
 		if ($el.classList.contains("btn") && !isAnswered) {
 			$el.classList.add(selectedClass);
 			let data = { answer: $el.dataset.answer };
-			dataConnection.send(data);
+			operatorDataConnection.send(data);
 			$$invalidate(3, isAnswered = true);
 
 			setTimeout(

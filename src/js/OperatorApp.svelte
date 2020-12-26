@@ -130,7 +130,7 @@
     {#if isStarted}
         <div class="loader">
             <div class="spinner-border text-primary">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">Загрузка...</span>
             </div>
         </div>
     {:else}
