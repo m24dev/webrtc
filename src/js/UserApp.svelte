@@ -21,7 +21,6 @@
 </style>
 
 <script>
-    import { afterUpdate } from 'svelte';
     import { fade, fly } from 'svelte/transition';
     import Peer from 'peerjs';
     import settings from './settings';
@@ -29,36 +28,24 @@
     const query = new URLSearchParams(location.search);
     const adminID = 'admin';
     const multiscreenID = 'multiscreen';
-    const operatorID = `operator${query.get('id')}`;
 
     let peer;
 
-    let isStarted = false;
+    let isLoading = false;
     let isPeerReady = false;
     let isDisconnected = false;
-    let isMediaReady = false;
-    let isMediaStarted = false;
+    let isLocalStreamReady = false;
     let isAnswered = false;
+    let isQuestionActive = false;
     let adminDataConnection;
     let adminMediaConnection;
     let operatorDataConnection;
     let operatorMediaConnection;
     let multiscreenMediaConnection;
-    let video;
-    let stream;
-
-    afterUpdate(() => {
-        if (isMediaReady && !isMediaStarted) {
-            video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play();
-                isMediaStarted = true;
-            };
-        }
-	});
+    let localStream;
 
     function makeConnection() {
-        isStarted = true;
+        isLoading = true;
 
         peer = new Peer(settings.callOptions);
 
@@ -82,22 +69,22 @@
     function getMedia() {
         navigator.mediaDevices.getUserMedia({ audio: true, video: {
             width: { max: 720 },
-            height: { max: 576 },
-            frameRate: { ideal: 10 }
+            height: { max: 576 }
         }})
             .then(function(mediaStream) {
-                stream = mediaStream;
+                localStream = mediaStream;
 
-                // adminDataConnection = peer.connect(adminID);
-                // setDataConnectionCallbacks(adminDataConnection);
+                adminDataConnection = peer.connect(adminID, {
+                    metadata: {
+                        name: `Пользователь ${query.get('id')}`
+                    }
+                });
+                setDataConnectionCallbacks(adminDataConnection);
 
-                // adminMediaConnection = peer.call(adminID, stream);
-                // setMediaConnectionCallbacks(adminMediaConnection);
+                adminMediaConnection = peer.call(adminID, localStream);
+                setMediaConnectionCallbacks(adminMediaConnection);
 
-                connectToOperator();
-                connectToMultiscreen();
-
-                isMediaReady = true;
+                isLocalStreamReady = true;
             })
             .catch(function (err) {
                 console.log(err.name + ": " + err.message);
@@ -120,16 +107,22 @@
         });
     }
 
-    function connectToOperator() {
-        operatorDataConnection = peer.connect(operatorID);
+    function connectToOperator(operatorID) {
+        if (operatorDataConnection) {
+            operatorDataConnection.close();
+        }
+        operatorDataConnection = peer.connect(operatorID, );
         setDataConnectionCallbacks(operatorDataConnection);
 
-        operatorMediaConnection = peer.call(operatorID, stream);
+        if (operatorMediaConnection) {
+            operatorMediaConnection.close();
+        }
+        operatorMediaConnection = peer.call(operatorID, localStream);
         setMediaConnectionCallbacks(operatorMediaConnection);
     }
 
     function connectToMultiscreen() {
-        multiscreenMediaConnection = peer.call(multiscreenID, stream);
+        multiscreenMediaConnection = peer.call(multiscreenID, localStream);
         setMediaConnectionCallbacks(multiscreenMediaConnection);
     }
 
@@ -139,37 +132,81 @@
         if ($el.classList.contains('btn') && !isAnswered) {
             $el.classList.add(selectedClass);
             let data = {
+                action: 'answer',
                 answer: $el.dataset.answer
             }
-            operatorDataConnection.send(data);
+            adminDataConnection.send(data);
+
+            if (operatorDataConnection) {
+                operatorDataConnection.send(data);
+            }
     
             isAnswered = true;
-    
-            setTimeout(() => {
-                $el.classList.remove(selectedClass);
-                isAnswered = false;
-            }, 3000);
         }
     }
 
     function handleData(data) {
-        console.log(data);
+        if (data.action === 'call') {
+            if (data.targetID == 7) {
+                connectToMultiscreen();
+            } else {
+                connectToOperator(`operator${data.targetID}`);
+            }
+        } else if (data.action === 'nextQuestion') {
+            isQuestionActive = true;
+
+            setTimeout(() => {
+                isQuestionActive = false;
+            }, 5000)
+        }
+    }
+
+    function video(node, localStream) {
+        play(node);
+        return {
+            update(localStream) {
+                play(node);
+            }
+        }
+    }
+
+    function play(el) {
+        el.srcObject = localStream;
+        el.onloadedmetadata = () => {
+            el.play();
+        };
+    }
+
+    function answerButtons(node) {
+        return {
+            destroy() {
+                const selectedClass = 'btn_selected';
+                let $selected = node.querySelector(`.${selectedClass}`);
+                if ($selected) {
+                    $selected.classList.remove(selectedClass);
+                }
+
+                isAnswered = false;
+            }
+        }
     }
 </script>
 
 {#if isPeerReady}
-    <div class="video" transition:fade>
-        <video muted bind:this={video}></video>
-    </div>
-    {#if isMediaReady}
-        <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer}>
-            <div class="p-4 d-flex justify-content-around">
-                <button type="button" class="btn btn-primary" data-answer="А" in:fly="{{y: 100, opacity: 0}}">A</button>
-                <button type="button" class="btn btn-primary" data-answer="Б" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
-                <button type="button" class="btn btn-primary" data-answer="В" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
-                <button type="button" class="btn btn-primary" data-answer="Г" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
-            </div>
+    {#if isLocalStreamReady}
+        <div class="video">
+            <video muted use:video={localStream}></video>
         </div>
+        {#if isQuestionActive}
+            <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer} use:answerButtons>
+                <div class="p-4 d-flex justify-content-around">
+                    <button type="button" class="btn btn-primary" data-answer="1" in:fly="{{y: 100, opacity: 0}}">A</button>
+                    <button type="button" class="btn btn-primary" data-answer="2" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
+                    <button type="button" class="btn btn-primary" data-answer="3" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
+                    <button type="button" class="btn btn-primary" data-answer="4" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
+                </div>
+            </div>
+        {/if}
     {/if}
     {#if isDisconnected}
         <div class="popup p-4" transition:fade>
@@ -177,15 +214,12 @@
         </div>
     {/if}
 {:else}
-    {#if isStarted}
-        <div class="loader">
-            <div class="spinner-border text-primary">
-                <span class="sr-only">Загрузка...</span>
-            </div>
-        </div>
-    {:else}
-        <div class="popup">
-            <button type="button" class="btn btn-lg btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
-        </div>
-    {/if}
+    <div class="popup">
+        <button type="button" class="btn btn-primary shadow-sm" disabled={isLoading} on:click={makeConnection}>
+            {#if isLoading}
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            {/if}
+            Начать
+        </button>
+    </div>
 {/if}

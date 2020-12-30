@@ -18,6 +18,9 @@ function safe_not_equal(a, b) {
 function is_empty(obj) {
     return Object.keys(obj).length === 0;
 }
+function action_destroyer(action_result) {
+    return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
+}
 
 const is_client = typeof window !== 'undefined';
 let now = is_client
@@ -178,8 +181,22 @@ function get_current_component() {
         throw new Error('Function called outside component initialization');
     return current_component;
 }
-function afterUpdate(fn) {
-    get_current_component().$$.after_update.push(fn);
+function onMount(fn) {
+    get_current_component().$$.on_mount.push(fn);
+}
+function createEventDispatcher() {
+    const component = get_current_component();
+    return (type, detail) => {
+        const callbacks = component.$$.callbacks[type];
+        if (callbacks) {
+            // TODO are there situations where events could be dispatched
+            // in a server (non-DOM) environment?
+            const event = custom_event(type, detail);
+            callbacks.slice().forEach(fn => {
+                fn.call(component, event);
+            });
+        }
+    };
 }
 
 const dirty_components = [];
@@ -586,4 +603,4 @@ class SvelteComponent {
     }
 }
 
-export { toggle_class as A, identity as B, SvelteComponent as S, afterUpdate as a, attr as b, check_outros as c, create_component as d, destroy_component as e, destroy_each as f, detach as g, element as h, empty as i, group_outros as j, init as k, insert as l, mount_component as m, noop as n, transition_out as o, append as p, listen as q, space as r, safe_not_equal as s, transition_in as t, text as u, binding_callbacks as v, add_render_callback as w, create_bidirectional_transition as x, set_data as y, create_in_transition as z };
+export { binding_callbacks as A, add_render_callback as B, create_bidirectional_transition as C, create_in_transition as D, toggle_class as E, identity as F, SvelteComponent as S, append as a, attr as b, createEventDispatcher as c, check_outros as d, create_component as e, destroy_component as f, destroy_each as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, listen as n, onMount as o, mount_component as p, noop as q, space as r, safe_not_equal as s, text as t, transition_in as u, transition_out as v, action_destroyer as w, is_function as x, run_all as y, set_data as z };

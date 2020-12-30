@@ -7397,18 +7397,10 @@ a.text-dark:hover, a.text-dark:focus {
   visibility: hidden !important;
 }
 
-.hidden {
-  display: none;
-}
-
 .wrap {
   position: relative;
   overflow: hidden;
   height: 100vh;
-}
-
-.btn {
-  line-height: 1;
 }
 
 .btn-icon {

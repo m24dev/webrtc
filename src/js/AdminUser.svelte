@@ -1,107 +1,107 @@
 <style type="text/scss">
     .user {
         &__video {
-
+            height: 150px;
+            video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
         }
     }
 </style>
 <script>
-    function toggleVideo(e, user) {
-        console.log(111);
+    import { createEventDispatcher } from 'svelte';
 
-        const $btn = e.currentTarget;
-        const $video = $btn.parentNode.querySelector('video');
+    export let user;
 
-        
+    const dispatch = createEventDispatcher();
 
-        if (user.mediaConnection.open) {
-            console.log(222);
-            user.mediaConnection.close();
-        } else {
-            console.log(333);
-            user.mediaConnection.answer();
-            playVideo($video);
+    let remoteStream;
+    let points = 0;
+
+    function acceptMedia() {
+        user.mediaConnection.on('stream', (stream) => {
+            if (remoteStream) return false;
+            console.log('stream');
+            remoteStream = stream;
+        });
+        user.mediaConnection.on('error', (err) => {
+            console.error(err);
+        });
+
+        user.mediaConnection.answer();
+    }
+
+    function video(node, remoteStream) {
+        return {
+            update(remoteStream) {
+                play(node);
+            }
         }
     }
-    function playVideo(user) {
-        el.srcObject = stream;
+
+    function play(el) {
+        el.srcObject = remoteStream;
         el.onloadedmetadata = () => {
             el.play();
         };
     }
 
-    function onConneсtionClose(e) {
-        users = users.map(user => {
-            if (user.peer === e.detail.peer) {
-                return {...user, isDataConnectionClosed: true};
-            }
-            return user;
-        });
+    function connectToScreen(n) {
+        dispatch('setUserConnect',
+        {
+            peer: user.peer,
+			targetID: n
+		});
     }
 
-    peer.on('open', function(id){
-        console.log('open');
-        isPeerReady = true;
-    });
-    peer.on('connection', function (conn) {
-        console.log('connection');
-        users = [...users, {
-            dataConnection: conn,
-            peer: conn.peer
-        }];
-    });
-    peer.on('call', function(conn) {
-        console.log('call');
-        users = users.map(user => {
-            if (user.peer === conn.peer) {
-                conn.on('stream', stream => {
-                    playVideo(user);
-                });
-                return {...user, mediaConnection: conn};
-            }
-            return user;
-        });
-    });
-    peer.on('error', function(err){
-        console.error(err);
-    });
-    peer.on('disconnected', function(){
-        console.log('disconnected');
-    });
+    function handleData(data) {
+        if (data.action === 'answer') {
+            
+        }
+    }
+
+    user.dataConnection.on('data', handleData);
 </script>
 
-{#if isPeerReady}
-    {#if users.length}
-        <div class="users">
-            {#each users as user}
-                <div class="user card mb-3">
-                    <div class="row no-gutters">
-                        <div class="col-md-4">
-                            <div class="user__video">
-                                <video></video>
-                                <button type="button" on:click={e => toggleVideo(e, user)}>Вкл./Выкл. видео</button>
-                            </div>
+<div class="user card mb-3">
+    <div class="row no-gutters">
+        {#if user.mediaConnection}
+            <div class="col-md-2">
+                <div class="user__video">
+                    <video muted use:video={remoteStream}></video>
+                </div>
+            </div>
+        {/if}
+        <div class={user.mediaConnection ? 'col-md-8' : 'col-md-10'}>
+            <div class="card-body">
+                <h5 class="card-title">{user.dataConnection.metadata.name}</h5>
+                {#if user.mediaConnection}
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-secondary" on:click={acceptMedia}>Показать видео</button>
+                    </div>
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(1)}>1</button>
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(2)}>2</button>
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(3)}>3</button>
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(4)}>4</button>
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(5)}>5</button>
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(6)}>6</button>
                         </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">{user.peer}</h5>
-                                <button type="button">Добавить</button>
-                                <p class="card-text">Правильных ответов: {user.points}</p>
-                            </div>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <button type="button" class="btn btn-secondary" on:click={() => connectToScreen(7)}>Мультиэкран</button>
                         </div>
                     </div>
-                </div>
-            {/each}
+                {/if}
+            </div>
         </div>
-    {:else}
-        <div class="p-5 text-center">
-            <p>Ожидание пользователей</p>
-        </div>
-    {/if}
-{:else}
-    <div class="loader">
-        <div class="spinner-border text-primary">
-            <span class="sr-only">Загрузка...</span>
+        <div class='col-md-2'>
+            <div class="card-body">
+                <h5 class="card-title">Ответы</h5>
+                <p class="card-text">{points}</p>
+            </div>
         </div>
     </div>
-{/if}
+</div>

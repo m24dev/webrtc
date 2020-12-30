@@ -16,18 +16,10 @@
 @import "../../node_modules/bootstrap/scss/transitions";
 @import "../../node_modules/bootstrap/scss/utilities";
 
-.hidden {
-    display: none;
-}
-
 .wrap {
     position: relative;
     overflow: hidden;
     height: 100vh;
-}
-
-.btn {
-    line-height: 1;
 }
 
 .btn-icon {

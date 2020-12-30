@@ -14,7 +14,6 @@
 </style>
 
 <script>
-    import { afterUpdate } from 'svelte';
     import { fly } from 'svelte/transition';
     import Peer from 'peerjs';
     import settings from './settings';
@@ -24,31 +23,17 @@
 
     let peer;
 
-    let isStarted = false;
+    let isLoading = false;
     let isPeerReady = false;
-    let isDisconnected = false;
-    let isMediaReady = false;
-    let isMediaStarted = false;
+    let isRemoteStreamReady = false;
     let isAnswered = false;
     let dataConnection;
     let mediaConnection;
-    let remotePeer;
-    let video;
     let remoteStream;
     let answer = '';
 
-    afterUpdate(() => {
-        if (isMediaReady && !isMediaStarted) {
-            video.srcObject = remoteStream;
-            video.onloadedmetadata = () => {
-                video.play();
-                isMediaStarted = true;
-            };
-        }
-    });
-    
     function makeConnection() {
-        isStarted = true;
+        isLoading = true;
 
         peer = new Peer(`operator${id}`, settings.callOptions);
 
@@ -58,8 +43,10 @@
         });
         peer.on('connection', function (conn) {
             console.log('connection');
+            if (dataConnection) {
+                dataConnection.close();
+            }
             dataConnection = conn;
-            remotePeer = conn.peer;
 
             dataConnection.on('data', handleData);
             dataConnection.on('close', () => {
@@ -71,20 +58,21 @@
         });
         peer.on('call', function(conn) {
             console.log('call');
-            if (remotePeer === conn.peer) {
-                mediaConnection = conn;
-                mediaConnection.on('stream', (stream) => {
-                    if (remoteStream) return false;
-                    console.log('stream');
-                    remoteStream = stream;
-                    isMediaReady = true;
-                });
-                mediaConnection.on('error', (err) => {
-                    console.error(err);
-                });
-
-                mediaConnection.answer();
+            if (mediaConnection && mediaConnection.open) {
+                mediaConnection.close();
             }
+            mediaConnection = conn;
+            mediaConnection.on('stream', (stream) => {
+                if (remoteStream) return false;
+                console.log('stream');
+                remoteStream = stream;
+                isRemoteStreamReady = true;
+            });
+            mediaConnection.on('error', (err) => {
+                console.error(err);
+            });
+
+            mediaConnection.answer();
         });
         peer.on('error', err => {
             console.error(err);
@@ -92,6 +80,22 @@
         peer.on('disconnected', function(){
             console.log('disconnected');
         });
+    }
+
+    function video(node, remoteStream) {
+        play(node);
+        return {
+            update(remoteStream) {
+                play(node);
+            }
+        }
+    }
+
+    function play(el) {
+        el.srcObject = remoteStream;
+        el.onloadedmetadata = () => {
+            el.play();
+        };
     }
 
     function handleData(data) {
@@ -105,9 +109,9 @@
 </script>
 
 {#if isPeerReady}
-    {#if isMediaReady}
+    {#if isRemoteStreamReady}
         <div class="video">
-            <video bind:this={video}></video>
+            <video muted use:video={remoteStream}></video>
         </div>
         {#if isAnswered}
             <div class="answer" transition:fly={{y: 100, opacity: 0}}>
@@ -116,26 +120,18 @@
                 </div>
             </div>
         {/if}
-        {#if isDisconnected}
-            <div class="popup p-4">
-                <div class="alert alert-warning text-center">Соединение закрыто</div>
-            </div>
-        {/if}
     {:else}
         <div class="popup">
             <p>Ожидание соединения</p>
         </div>
     {/if}
 {:else}
-    {#if isStarted}
-        <div class="loader">
-            <div class="spinner-border text-primary">
-                <span class="sr-only">Загрузка...</span>
-            </div>
-        </div>
-    {:else}
-        <div class="popup">
-            <button type="button" class="btn btn-lg btn-primary shadow-sm" on:click={makeConnection}>Начать</button>
-        </div>
-    {/if}
+    <div class="popup">
+        <button type="button" class="btn btn-primary shadow-sm" disabled={isLoading} on:click={makeConnection}>
+            {#if isLoading}
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            {/if}
+            Начать
+        </button>
+    </div>
 {/if}

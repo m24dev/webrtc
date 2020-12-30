@@ -179,7 +179,7 @@ function create_if_block_1(ctx) {
 			current = true;
 		},
 		p(ctx, dirty) {
-			if (dirty & /*users, handleClose*/ 6) {
+			if (dirty & /*users, onConneсtionClose*/ 6) {
 				each_value = /*users*/ ctx[1];
 				let i;
 
@@ -235,13 +235,8 @@ function create_if_block_1(ctx) {
 function create_if_block_2(ctx) {
 	let multiscreenuser;
 	let current;
-
-	multiscreenuser = new MultiscreenUser({
-			props: {
-				user: /*user*/ ctx[4],
-				onClose: /*handleClose*/ ctx[2]
-			}
-		});
+	multiscreenuser = new MultiscreenUser({ props: { user: /*user*/ ctx[4] } });
+	multiscreenuser.$on("close", /*onConneсtionClose*/ ctx[2]);
 
 	return {
 		c() {
@@ -401,7 +396,7 @@ function instance($$self, $$props, $$invalidate) {
 	let isPeerReady = false;
 	let users = [];
 
-	function handleClose(e) {
+	function onConneсtionClose(e) {
 		$$invalidate(1, users = users.map(user => {
 			if (user.peer === e.detail.peer) {
 				return { ...user, isDataConnectionClosed: true };
@@ -429,7 +424,7 @@ function instance($$self, $$props, $$invalidate) {
 		console.log("disconnected");
 	});
 
-	return [isPeerReady, users, handleClose];
+	return [isPeerReady, users, onConneсtionClose];
 }
 
 class MultiscreenApp extends SvelteComponent {

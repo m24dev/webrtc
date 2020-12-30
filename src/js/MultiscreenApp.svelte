@@ -14,7 +14,7 @@
     let isPeerReady = false;
     let users = [];
 
-    function handleClose(e) {
+    function onConneсtionClose(e) {
         users = users.map(user => {
             if (user.peer === e.detail.peer) {
                 return {...user, isDataConnectionClosed: true};
@@ -47,7 +47,7 @@
         <div class="multiscreen">
             {#each users as user}
                 {#if user.mediaConnection}
-                    <MultiscreenUser user={user} onClose={handleClose} />
+                    <MultiscreenUser user={user} on:close={onConneсtionClose} />
                 {/if}
             {/each}
         </div>
