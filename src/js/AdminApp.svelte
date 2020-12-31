@@ -29,7 +29,7 @@
 
         users.map(user => {
             let data = {
-                action: 'nextQuestion'
+                action: 'startQuestion'
             }
             user.dataConnection.send(data);
         });
@@ -37,7 +37,14 @@
         setTimeout(() => {
             currentQuestion++;
             isQuestionActive = false;
-        }, 5000)
+
+            users.map(user => {
+                let data = {
+                    action: 'endQuestion'
+                }
+                user.dataConnection.send(data);
+            });
+        }, 7000);
     }
 
     function onSetUserConneсt(e) {
@@ -95,7 +102,7 @@
     <div class="users">
         {#if users.length}
             {#each users as user}
-                <AdminUser user={user} question={questions} currentQuestion={currentQuestion} on:setUserConnect={onSetUserConneсt} on:close={onConneсtionClose} />
+                <AdminUser user={user} questions={questions} currentQuestion={currentQuestion} on:setUserConnect={onSetUserConneсt} on:close={onConneсtionClose} />
             {/each}
         {:else}
             <div class="p-5 text-center">

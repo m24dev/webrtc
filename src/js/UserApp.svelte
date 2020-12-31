@@ -152,12 +152,10 @@
             } else {
                 connectToOperator(`operator${data.targetID}`);
             }
-        } else if (data.action === 'nextQuestion') {
+        } else if (data.action === 'startQuestion') {
             isQuestionActive = true;
-
-            setTimeout(() => {
-                isQuestionActive = false;
-            }, 5000)
+        } else if (data.action === 'endQuestion') {
+            isQuestionActive = false;
         }
     }
 
@@ -200,10 +198,10 @@
         {#if isQuestionActive}
             <div class="buttons" class:buttons_answered={isAnswered} on:click={handleAnswer} use:answerButtons>
                 <div class="p-4 d-flex justify-content-around">
-                    <button type="button" class="btn btn-primary" data-answer="1" in:fly="{{y: 100, opacity: 0}}">A</button>
-                    <button type="button" class="btn btn-primary" data-answer="2" in:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
-                    <button type="button" class="btn btn-primary" data-answer="3" in:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
-                    <button type="button" class="btn btn-primary" data-answer="4" in:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
+                    <button type="button" class="btn btn-primary" data-answer="1" transition:fly="{{y: 100, opacity: 0}}">A</button>
+                    <button type="button" class="btn btn-primary" data-answer="2" transition:fly="{{y: 100, opacity: 0, delay: 100}}">Б</button>
+                    <button type="button" class="btn btn-primary" data-answer="3" transition:fly="{{y: 100, opacity: 0, delay: 200}}">В</button>
+                    <button type="button" class="btn btn-primary" data-answer="4" transition:fly="{{y: 100, opacity: 0, delay: 300}}">Г</button>
                 </div>
             </div>
         {/if}
