@@ -34,7 +34,7 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (105:0) {:else}
+// (112:0) {:else}
 function create_else_block_1(ctx) {
 	let div1;
 
@@ -56,7 +56,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (90:0) {#if isPeerReady}
+// (97:0) {#if isPeerReady}
 function create_if_block(ctx) {
 	let div0;
 	let button;
@@ -158,7 +158,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (99:8) {:else}
+// (106:8) {:else}
 function create_else_block(ctx) {
 	let div;
 
@@ -180,7 +180,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (95:8) {#if users.length}
+// (102:8) {#if users.length}
 function create_if_block_1(ctx) {
 	let each_1_anchor;
 	let current;
@@ -264,7 +264,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (96:12) {#each users as user}
+// (103:12) {#each users as user}
 function create_each_block(ctx) {
 	let adminuser;
 	let current;
@@ -272,8 +272,8 @@ function create_each_block(ctx) {
 	adminuser = new AdminUser({
 			props: {
 				user: /*user*/ ctx[9],
-				question: /*questions*/ ctx[3],
-				currentQuestion: /*currentQuestion*/ ctx[4]
+				questions: /*questions*/ ctx[4],
+				currentQuestion: /*currentQuestion*/ ctx[3]
 			}
 		});
 
@@ -291,8 +291,7 @@ function create_each_block(ctx) {
 		p(ctx, dirty) {
 			const adminuser_changes = {};
 			if (dirty & /*users*/ 4) adminuser_changes.user = /*user*/ ctx[9];
-			if (dirty & /*questions*/ 8) adminuser_changes.question = /*questions*/ ctx[3];
-			if (dirty & /*currentQuestion*/ 16) adminuser_changes.currentQuestion = /*currentQuestion*/ ctx[4];
+			if (dirty & /*currentQuestion*/ 8) adminuser_changes.currentQuestion = /*currentQuestion*/ ctx[3];
 			adminuser.$set(adminuser_changes);
 		},
 		i(local) {
@@ -388,27 +387,34 @@ function instance($$self, $$props, $$invalidate) {
 	let currentQuestion = 0;
 
 	onMount(() => {
-		fetch("http://localhost:3000/questions").then(response => {
-			return response.json();
-		}).then(data => {
-			$$invalidate(3, questions = data);
-		});
-	});
+		
+	}); // fetch('https://localhost:3000/questions')
+	//     .then(response => {
+	//         return response.json();
+	//     })
 
+	//     .then(data => {
+	//         questions = data;
+	//     })
 	function nextQuestion() {
 		$$invalidate(1, isQuestionActive = true);
 
 		users.map(user => {
-			let data = { action: "nextQuestion" };
+			let data = { action: "startQuestion" };
 			user.dataConnection.send(data);
 		});
 
 		setTimeout(
 			() => {
-				$$invalidate(4, currentQuestion++, currentQuestion);
+				$$invalidate(3, currentQuestion++, currentQuestion);
 				$$invalidate(1, isQuestionActive = false);
+
+				users.map(user => {
+					let data = { action: "endQuestion" };
+					user.dataConnection.send(data);
+				});
 			},
-			5000
+			7000
 		);
 	}
 
@@ -467,8 +473,8 @@ function instance($$self, $$props, $$invalidate) {
 		isPeerReady,
 		isQuestionActive,
 		users,
-		questions,
 		currentQuestion,
+		questions,
 		nextQuestion,
 		onSetUserConneсt,
 		onConneсtionClose

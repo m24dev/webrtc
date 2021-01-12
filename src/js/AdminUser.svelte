@@ -75,11 +75,11 @@
     }
 
     function handleData(data) {
-        if (data.action === 'answer') {
-            if (data.answer == questions[currentQuestion].answer) {
-                points++;
-            }
-        }
+        // if (data.action === 'answer') {
+        //     if (data.answer == questions[currentQuestion].answer) {
+        //         points++;
+        //     }
+        // }
     }
 
     user.dataConnection.on('data', handleData);

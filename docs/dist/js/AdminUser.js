@@ -3,8 +3,10 @@ import './AdminUser.css.proxy.js';
 import {
 	SvelteComponent,
 	action_destroyer,
+	add_render_callback,
 	append,
 	attr,
+	create_in_transition,
 	detach,
 	element,
 	init,
@@ -16,57 +18,179 @@ import {
 	safe_not_equal,
 	set_data,
 	space,
-	text
+	svg_element,
+	text,
+	xlink_attr
 } from "../../web_modules/svelte/internal.js";
 
 import { createEventDispatcher } from "../../web_modules/svelte.js";
+import { fly } from "../../web_modules/svelte/transition.js";
 
 function create_if_block_1(ctx) {
 	let div1;
 	let div0;
 	let video_1;
 	let video_action;
+	let t;
 	let mounted;
 	let dispose;
+	let if_block = !/*isMediaConnectionClosed*/ ctx[1] && create_if_block_2(ctx);
 
 	return {
 		c() {
 			div1 = element("div");
 			div0 = element("div");
 			video_1 = element("video");
+			t = space();
+			if (if_block) if_block.c();
 			video_1.muted = true;
-			attr(video_1, "class", "svelte-1302kxk");
-			attr(div0, "class", "user__video svelte-1302kxk");
+			attr(video_1, "class", "svelte-li6vj2");
+			attr(div0, "class", "user__video bg-dark text-light svelte-li6vj2");
 			attr(div1, "class", "col-md-2");
 		},
 		m(target, anchor) {
 			insert(target, div1, anchor);
 			append(div1, div0);
 			append(div0, video_1);
+			append(div0, t);
+			if (if_block) if_block.m(div0, null);
 
 			if (!mounted) {
-				dispose = action_destroyer(video_action = /*video*/ ctx[3].call(null, video_1, /*remoteStream*/ ctx[1]));
+				dispose = action_destroyer(video_action = /*video*/ ctx[4].call(null, video_1, /*remoteStream*/ ctx[2]));
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (video_action && is_function(video_action.update) && dirty & /*remoteStream*/ 2) video_action.update.call(null, /*remoteStream*/ ctx[1]);
+			if (video_action && is_function(video_action.update) && dirty & /*remoteStream*/ 4) video_action.update.call(null, /*remoteStream*/ ctx[2]);
+
+			if (!/*isMediaConnectionClosed*/ ctx[1]) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+				} else {
+					if_block = create_if_block_2(ctx);
+					if_block.c();
+					if_block.m(div0, null);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
 		},
 		d(detaching) {
 			if (detaching) detach(div1);
+			if (if_block) if_block.d();
 			mounted = false;
 			dispose();
 		}
 	};
 }
 
-// (76:16) {#if user.mediaConnection}
+// (92:20) {#if !isMediaConnectionClosed}
+function create_if_block_2(ctx) {
+	let button;
+	let mounted;
+	let dispose;
+
+	function select_block_type(ctx, dirty) {
+		if (/*user*/ ctx[0].mediaConnection.open) return create_if_block_3;
+		return create_else_block;
+	}
+
+	let current_block_type = select_block_type(ctx, -1);
+	let if_block = current_block_type(ctx);
+
+	return {
+		c() {
+			button = element("button");
+			if_block.c();
+			attr(button, "type", "button");
+			attr(button, "class", "btn btn-icon btn-answer svelte-li6vj2");
+		},
+		m(target, anchor) {
+			insert(target, button, anchor);
+			if_block.m(button, null);
+
+			if (!mounted) {
+				dispose = listen(button, "click", /*toggleMedia*/ ctx[3]);
+				mounted = true;
+			}
+		},
+		p(ctx, dirty) {
+			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
+				if_block.d(1);
+				if_block = current_block_type(ctx);
+
+				if (if_block) {
+					if_block.c();
+					if_block.m(button, null);
+				}
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(button);
+			if_block.d();
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (98:28) {:else}
+function create_else_block(ctx) {
+	let svg;
+	let use;
+
+	return {
+		c() {
+			svg = svg_element("svg");
+			use = svg_element("use");
+			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video");
+			attr(svg, "class", "bi text-success");
+			attr(svg, "width", "32");
+			attr(svg, "height", "32");
+			attr(svg, "fill", "currentColor");
+		},
+		m(target, anchor) {
+			insert(target, svg, anchor);
+			append(svg, use);
+		},
+		d(detaching) {
+			if (detaching) detach(svg);
+		}
+	};
+}
+
+// (94:28) {#if user.mediaConnection.open}
+function create_if_block_3(ctx) {
+	let svg;
+	let use;
+
+	return {
+		c() {
+			svg = svg_element("svg");
+			use = svg_element("use");
+			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video-off");
+			attr(svg, "class", "bi text-danger");
+			attr(svg, "width", "32");
+			attr(svg, "height", "32");
+			attr(svg, "fill", "currentColor");
+		},
+		m(target, anchor) {
+			insert(target, svg, anchor);
+			append(svg, use);
+		},
+		d(detaching) {
+			if (detaching) detach(svg);
+		}
+	};
+}
+
+// (111:16) {#if user.mediaConnection}
 function create_if_block(ctx) {
+	let div2;
 	let div0;
 	let button0;
 	let t1;
-	let div3;
-	let div1;
 	let button1;
 	let t3;
 	let button2;
@@ -77,45 +201,38 @@ function create_if_block(ctx) {
 	let t9;
 	let button5;
 	let t11;
+	let div1;
 	let button6;
-	let t13;
-	let div2;
-	let button7;
 	let mounted;
 	let dispose;
 
 	return {
 		c() {
+			div2 = element("div");
 			div0 = element("div");
 			button0 = element("button");
-			button0.textContent = "Показать видео";
+			button0.textContent = "1";
 			t1 = space();
-			div3 = element("div");
-			div1 = element("div");
 			button1 = element("button");
-			button1.textContent = "1";
+			button1.textContent = "2";
 			t3 = space();
 			button2 = element("button");
-			button2.textContent = "2";
+			button2.textContent = "3";
 			t5 = space();
 			button3 = element("button");
-			button3.textContent = "3";
+			button3.textContent = "4";
 			t7 = space();
 			button4 = element("button");
-			button4.textContent = "4";
+			button4.textContent = "5";
 			t9 = space();
 			button5 = element("button");
-			button5.textContent = "5";
+			button5.textContent = "6";
 			t11 = space();
+			div1 = element("div");
 			button6 = element("button");
-			button6.textContent = "6";
-			t13 = space();
-			div2 = element("div");
-			button7 = element("button");
-			button7.textContent = "Мультиэкран";
+			button6.textContent = "Мультиэкран";
 			attr(button0, "type", "button");
 			attr(button0, "class", "btn btn-secondary");
-			attr(div0, "class", "mb-3");
 			attr(button1, "type", "button");
 			attr(button1, "class", "btn btn-secondary");
 			attr(button2, "type", "button");
@@ -126,47 +243,41 @@ function create_if_block(ctx) {
 			attr(button4, "class", "btn btn-secondary");
 			attr(button5, "type", "button");
 			attr(button5, "class", "btn btn-secondary");
+			attr(div0, "class", "btn-group mr-2");
 			attr(button6, "type", "button");
 			attr(button6, "class", "btn btn-secondary");
-			attr(div1, "class", "btn-group mr-2");
-			attr(button7, "type", "button");
-			attr(button7, "class", "btn btn-secondary");
-			attr(div2, "class", "btn-group btn-group-toggle");
-			attr(div2, "data-toggle", "buttons");
-			attr(div3, "class", "btn-toolbar");
-			attr(div3, "role", "toolbar");
+			attr(div1, "class", "btn-group btn-group-toggle");
+			attr(div1, "data-toggle", "buttons");
+			attr(div2, "class", "btn-toolbar");
+			attr(div2, "role", "toolbar");
 		},
 		m(target, anchor) {
-			insert(target, div0, anchor);
+			insert(target, div2, anchor);
+			append(div2, div0);
 			append(div0, button0);
-			insert(target, t1, anchor);
-			insert(target, div3, anchor);
-			append(div3, div1);
-			append(div1, button1);
-			append(div1, t3);
-			append(div1, button2);
-			append(div1, t5);
-			append(div1, button3);
-			append(div1, t7);
-			append(div1, button4);
-			append(div1, t9);
-			append(div1, button5);
-			append(div1, t11);
+			append(div0, t1);
+			append(div0, button1);
+			append(div0, t3);
+			append(div0, button2);
+			append(div0, t5);
+			append(div0, button3);
+			append(div0, t7);
+			append(div0, button4);
+			append(div0, t9);
+			append(div0, button5);
+			append(div2, t11);
+			append(div2, div1);
 			append(div1, button6);
-			append(div3, t13);
-			append(div3, div2);
-			append(div2, button7);
 
 			if (!mounted) {
 				dispose = [
-					listen(button0, "click", /*acceptMedia*/ ctx[2]),
-					listen(button1, "click", /*click_handler*/ ctx[5]),
-					listen(button2, "click", /*click_handler_1*/ ctx[6]),
-					listen(button3, "click", /*click_handler_2*/ ctx[7]),
-					listen(button4, "click", /*click_handler_3*/ ctx[8]),
-					listen(button5, "click", /*click_handler_4*/ ctx[9]),
-					listen(button6, "click", /*click_handler_5*/ ctx[10]),
-					listen(button7, "click", /*click_handler_6*/ ctx[11])
+					listen(button0, "click", /*click_handler*/ ctx[8]),
+					listen(button1, "click", /*click_handler_1*/ ctx[9]),
+					listen(button2, "click", /*click_handler_2*/ ctx[10]),
+					listen(button3, "click", /*click_handler_3*/ ctx[11]),
+					listen(button4, "click", /*click_handler_4*/ ctx[12]),
+					listen(button5, "click", /*click_handler_5*/ ctx[13]),
+					listen(button6, "click", /*click_handler_6*/ ctx[14])
 				];
 
 				mounted = true;
@@ -174,9 +285,7 @@ function create_if_block(ctx) {
 		},
 		p: noop,
 		d(detaching) {
-			if (detaching) detach(div0);
-			if (detaching) detach(t1);
-			if (detaching) detach(div3);
+			if (detaching) detach(div2);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -200,6 +309,7 @@ function create_fragment(ctx) {
 	let h51;
 	let t5;
 	let p;
+	let div5_intro;
 	let if_block0 = /*user*/ ctx[0].mediaConnection && create_if_block_1(ctx);
 	let if_block1 = /*user*/ ctx[0].mediaConnection && create_if_block(ctx);
 
@@ -235,7 +345,7 @@ function create_fragment(ctx) {
 			attr(div2, "class", "card-body");
 			attr(div3, "class", "col-md-2");
 			attr(div4, "class", "row no-gutters");
-			attr(div5, "class", "user card mb-3");
+			attr(div5, "class", "user card bg-light shadow-sm mb-3 svelte-li6vj2");
 		},
 		m(target, anchor) {
 			insert(target, div5, anchor);
@@ -290,7 +400,14 @@ function create_fragment(ctx) {
 				attr(div1, "class", div1_class_value);
 			}
 		},
-		i: noop,
+		i(local) {
+			if (!div5_intro) {
+				add_render_callback(() => {
+					div5_intro = create_in_transition(div5, fly, { y: 30, duration: 300 });
+					div5_intro.start();
+				});
+			}
+		},
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div5);
@@ -303,28 +420,36 @@ function create_fragment(ctx) {
 let points = 0;
 
 function handleData(data) {
-	if (data.action === "answer") {
-		
-	}
-}
+	
+} // if (data.action === 'answer') {
+//     if (data.answer == questions[currentQuestion].answer) {
 
 function instance($$self, $$props, $$invalidate) {
 	let { user } = $$props;
+	let { questions } = $$props;
+	let { currentQuestion } = $$props;
 	const dispatch = createEventDispatcher();
+	let isMediaConnectionClosed = false;
 	let remoteStream;
 
-	function acceptMedia() {
-		user.mediaConnection.on("stream", stream => {
-			if (remoteStream) return false;
-			console.log("stream");
-			$$invalidate(1, remoteStream = stream);
-		});
+	function toggleMedia() {
+		if (remoteStream) {
+			user.mediaConnection.close();
+			$$invalidate(1, isMediaConnectionClosed = true);
+			$$invalidate(2, remoteStream = null);
+		} else {
+			user.mediaConnection.on("stream", stream => {
+				if (remoteStream) return false;
+				console.log("stream");
+				$$invalidate(2, remoteStream = stream);
+			});
 
-		user.mediaConnection.on("error", err => {
-			console.error(err);
-		});
+			user.mediaConnection.on("error", err => {
+				console.error(err);
+			});
 
-		user.mediaConnection.answer();
+			user.mediaConnection.answer();
+		}
 	}
 
 	function video(node, remoteStream) {
@@ -347,7 +472,11 @@ function instance($$self, $$props, $$invalidate) {
 		dispatch("setUserConnect", { peer: user.peer, targetID: n });
 	}
 
+	//         points++;
+	//     }
+	// }
 	user.dataConnection.on("data", handleData);
+
 	const click_handler = () => connectToScreen(1);
 	const click_handler_1 = () => connectToScreen(2);
 	const click_handler_2 = () => connectToScreen(3);
@@ -358,14 +487,19 @@ function instance($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		if ("user" in $$props) $$invalidate(0, user = $$props.user);
+		if ("questions" in $$props) $$invalidate(6, questions = $$props.questions);
+		if ("currentQuestion" in $$props) $$invalidate(7, currentQuestion = $$props.currentQuestion);
 	};
 
 	return [
 		user,
+		isMediaConnectionClosed,
 		remoteStream,
-		acceptMedia,
+		toggleMedia,
 		video,
 		connectToScreen,
+		questions,
+		currentQuestion,
 		click_handler,
 		click_handler_1,
 		click_handler_2,
@@ -379,7 +513,12 @@ function instance($$self, $$props, $$invalidate) {
 class AdminUser extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance, create_fragment, safe_not_equal, { user: 0 });
+
+		init(this, options, instance, create_fragment, safe_not_equal, {
+			user: 0,
+			questions: 6,
+			currentQuestion: 7
+		});
 	}
 }
 

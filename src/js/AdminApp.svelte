@@ -15,13 +15,13 @@
     let currentQuestion = 0;
 
     onMount(() => {
-        fetch('http://localhost:3000/questions')
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                questions = data;
-            })
+        // fetch('https://localhost:3000/questions')
+        //     .then(response => {
+        //         return response.json();
+        //     })
+        //     .then(data => {
+        //         questions = data;
+        //     })
     });
 
     function nextQuestion() {

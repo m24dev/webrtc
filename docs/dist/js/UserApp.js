@@ -8,7 +8,6 @@ import {
 	attr,
 	check_outros,
 	create_bidirectional_transition,
-	create_in_transition,
 	detach,
 	element,
 	empty,
@@ -90,7 +89,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (191:0) {#if isPeerReady}
+// (189:0) {#if isPeerReady}
 function create_if_block(ctx) {
 	let t;
 	let if_block1_anchor;
@@ -127,8 +126,13 @@ function create_if_block(ctx) {
 					if_block0.m(t.parentNode, t);
 				}
 			} else if (if_block0) {
-				if_block0.d(1);
-				if_block0 = null;
+				group_outros();
+
+				transition_out(if_block0, 1, 1, () => {
+					if_block0 = null;
+				});
+
+				check_outros();
 			}
 		},
 		i(local) {
@@ -138,6 +142,7 @@ function create_if_block(ctx) {
 			current = true;
 		},
 		o(local) {
+			transition_out(if_block0);
 			transition_out(if_block1);
 			current = false;
 		},
@@ -150,7 +155,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (215:12) {#if isLoading}
+// (213:12) {#if isLoading}
 function create_if_block_4(ctx) {
 	let span;
 
@@ -170,13 +175,14 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (192:4) {#if isLocalStreamReady}
+// (190:4) {#if isLocalStreamReady}
 function create_if_block_2(ctx) {
 	let div;
 	let video_1;
 	let video_action;
 	let t;
 	let if_block_anchor;
+	let current;
 	let mounted;
 	let dispose;
 	let if_block = /*isQuestionActive*/ ctx[4] && create_if_block_3(ctx);
@@ -197,6 +203,7 @@ function create_if_block_2(ctx) {
 			insert(target, t, anchor);
 			if (if_block) if_block.m(target, anchor);
 			insert(target, if_block_anchor, anchor);
+			current = true;
 
 			if (!mounted) {
 				dispose = action_destroyer(video_action = /*video*/ ctx[8].call(null, video_1, /*localStream*/ ctx[5]));
@@ -220,14 +227,24 @@ function create_if_block_2(ctx) {
 					if_block.m(if_block_anchor.parentNode, if_block_anchor);
 				}
 			} else if (if_block) {
-				if_block.d(1);
-				if_block = null;
+				group_outros();
+
+				transition_out(if_block, 1, 1, () => {
+					if_block = null;
+				});
+
+				check_outros();
 			}
 		},
 		i(local) {
+			if (current) return;
 			transition_in(if_block);
+			current = true;
 		},
-		o: noop,
+		o(local) {
+			transition_out(if_block);
+			current = false;
+		},
 		d(detaching) {
 			if (detaching) detach(div);
 			if (detaching) detach(t);
@@ -239,22 +256,23 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (196:8) {#if isQuestionActive}
+// (194:8) {#if isQuestionActive}
 function create_if_block_3(ctx) {
 	let div1;
 	let div0;
 	let button0;
-	let button0_intro;
+	let button0_transition;
 	let t1;
 	let button1;
-	let button1_intro;
+	let button1_transition;
 	let t3;
 	let button2;
-	let button2_intro;
+	let button2_transition;
 	let t5;
 	let button3;
-	let button3_intro;
+	let button3_transition;
 	let answerButtons_action;
+	let current;
 	let mounted;
 	let dispose;
 
@@ -299,6 +317,7 @@ function create_if_block_3(ctx) {
 			append(div0, button2);
 			append(div0, t5);
 			append(div0, button3);
+			current = true;
 
 			if (!mounted) {
 				dispose = [
@@ -315,44 +334,54 @@ function create_if_block_3(ctx) {
 			}
 		},
 		i(local) {
-			if (!button0_intro) {
-				add_render_callback(() => {
-					button0_intro = create_in_transition(button0, fly, { y: 100, opacity: 0 });
-					button0_intro.start();
-				});
-			}
+			if (current) return;
 
-			if (!button1_intro) {
-				add_render_callback(() => {
-					button1_intro = create_in_transition(button1, fly, { y: 100, opacity: 0, delay: 100 });
-					button1_intro.start();
-				});
-			}
+			add_render_callback(() => {
+				if (!button0_transition) button0_transition = create_bidirectional_transition(button0, fly, { y: 100, opacity: 0 }, true);
+				button0_transition.run(1);
+			});
 
-			if (!button2_intro) {
-				add_render_callback(() => {
-					button2_intro = create_in_transition(button2, fly, { y: 100, opacity: 0, delay: 200 });
-					button2_intro.start();
-				});
-			}
+			add_render_callback(() => {
+				if (!button1_transition) button1_transition = create_bidirectional_transition(button1, fly, { y: 100, opacity: 0, delay: 100 }, true);
+				button1_transition.run(1);
+			});
 
-			if (!button3_intro) {
-				add_render_callback(() => {
-					button3_intro = create_in_transition(button3, fly, { y: 100, opacity: 0, delay: 300 });
-					button3_intro.start();
-				});
-			}
+			add_render_callback(() => {
+				if (!button2_transition) button2_transition = create_bidirectional_transition(button2, fly, { y: 100, opacity: 0, delay: 200 }, true);
+				button2_transition.run(1);
+			});
+
+			add_render_callback(() => {
+				if (!button3_transition) button3_transition = create_bidirectional_transition(button3, fly, { y: 100, opacity: 0, delay: 300 }, true);
+				button3_transition.run(1);
+			});
+
+			current = true;
 		},
-		o: noop,
+		o(local) {
+			if (!button0_transition) button0_transition = create_bidirectional_transition(button0, fly, { y: 100, opacity: 0 }, false);
+			button0_transition.run(0);
+			if (!button1_transition) button1_transition = create_bidirectional_transition(button1, fly, { y: 100, opacity: 0, delay: 100 }, false);
+			button1_transition.run(0);
+			if (!button2_transition) button2_transition = create_bidirectional_transition(button2, fly, { y: 100, opacity: 0, delay: 200 }, false);
+			button2_transition.run(0);
+			if (!button3_transition) button3_transition = create_bidirectional_transition(button3, fly, { y: 100, opacity: 0, delay: 300 }, false);
+			button3_transition.run(0);
+			current = false;
+		},
 		d(detaching) {
 			if (detaching) detach(div1);
+			if (detaching && button0_transition) button0_transition.end();
+			if (detaching && button1_transition) button1_transition.end();
+			if (detaching && button2_transition) button2_transition.end();
+			if (detaching && button3_transition) button3_transition.end();
 			mounted = false;
 			run_all(dispose);
 		}
 	};
 }
 
-// (207:4) {#if isDisconnected}
+// (205:4) {#if isDisconnected}
 function create_if_block_1(ctx) {
 	let div1;
 	let div1_transition;
@@ -592,15 +621,10 @@ function instance($$self, $$props, $$invalidate) {
 			} else {
 				connectToOperator(`operator${data.targetID}`);
 			}
-		} else if (data.action === "nextQuestion") {
+		} else if (data.action === "startQuestion") {
 			$$invalidate(4, isQuestionActive = true);
-
-			setTimeout(
-				() => {
-					$$invalidate(4, isQuestionActive = false);
-				},
-				5000
-			);
+		} else if (data.action === "endQuestion") {
+			$$invalidate(4, isQuestionActive = false);
 		}
 	}
 
