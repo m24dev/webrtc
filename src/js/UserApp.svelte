@@ -26,8 +26,8 @@
     import settings from './settings';
 
     const query = new URLSearchParams(location.search);
-    const adminID = 'admin';
-    const multiscreenID = 'multiscreen';
+    const adminID = settings.adminID;
+    const multiscreenID = settings.multiscreenID;
 
     let peer;
 

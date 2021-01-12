@@ -9,7 +9,7 @@
     import settings from './settings';
     import MultiscreenUser from './MultiscreenUser.svelte';
 
-    const peer = new Peer('multiscreen', settings.callOptions);
+    const peer = new Peer(settings.multiscreenID, settings.callOptions);
 
     let isPeerReady = false;
     let users = [];

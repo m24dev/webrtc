@@ -1,8 +1,9 @@
 export default {
     callOptions: {
-        host: '186528f25664.ngrok.io',
+        host: 'cross.m24.ru',
         port: 443,
-        path: '/myapp',
+        path: '/webrc/peerjs',
+        debug: 3,
         config: {
             iceServers: [
                 {
@@ -17,7 +18,5 @@ export default {
                 }
             ]
         }
-    },
-    adminID: 'admin',
-    multiscreenID: 'multiscreen'
+    }
 };

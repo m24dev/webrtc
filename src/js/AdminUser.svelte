@@ -3,7 +3,7 @@
         overflow: hidden;
         &__video {
             position: relative;
-            height: 150px;
+            height: 200px;
             video {
                 width: 100%;
                 height: 100%;
@@ -12,8 +12,10 @@
             .btn-answer {
                 position: absolute;
                 left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
+                bottom: 5px;
+                transform: translateX(-50%);
+                white-space: nowrap;
+                opacity: .7;
             }
         }
     }
@@ -92,15 +94,11 @@
                 <div class="user__video bg-dark text-light">
                     <video muted use:video={remoteStream}></video>
                     {#if !isMediaConnectionClosed}
-                        <button type="button" class="btn btn-icon btn-answer" on:click={toggleMedia}>
+                        <button type="button" class="btn btn-sm btn-secondary btn-answer" on:click={toggleMedia}>
                             {#if user.mediaConnection.open}
-                                <svg class="bi text-danger" width="32" height="32" fill="currentColor">
-                                    <use xlink:href="/dist/images/bootstrap-icons.svg#camera-video-off"/>
-                                </svg>
+                                Выключить видео
                             {:else}
-                                <svg class="bi text-success" width="32" height="32" fill="currentColor">
-                                    <use xlink:href="/dist/images/bootstrap-icons.svg#camera-video"/>
-                                </svg>
+                                Включить видео
                             {/if}
                         </button>
                     {/if}

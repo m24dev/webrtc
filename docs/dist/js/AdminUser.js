@@ -18,9 +18,7 @@ import {
 	safe_not_equal,
 	set_data,
 	space,
-	svg_element,
-	text,
-	xlink_attr
+	text
 } from "../../web_modules/svelte/internal.js";
 
 import { createEventDispatcher } from "../../web_modules/svelte.js";
@@ -44,8 +42,8 @@ function create_if_block_1(ctx) {
 			t = space();
 			if (if_block) if_block.c();
 			video_1.muted = true;
-			attr(video_1, "class", "svelte-li6vj2");
-			attr(div0, "class", "user__video bg-dark text-light svelte-li6vj2");
+			attr(video_1, "class", "svelte-8w7att");
+			attr(div0, "class", "user__video bg-dark text-light svelte-8w7att");
 			attr(div1, "class", "col-md-2");
 		},
 		m(target, anchor) {
@@ -85,7 +83,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (92:20) {#if !isMediaConnectionClosed}
+// (94:20) {#if !isMediaConnectionClosed}
 function create_if_block_2(ctx) {
 	let button;
 	let mounted;
@@ -104,7 +102,7 @@ function create_if_block_2(ctx) {
 			button = element("button");
 			if_block.c();
 			attr(button, "type", "button");
-			attr(button, "class", "btn btn-icon btn-answer svelte-li6vj2");
+			attr(button, "class", "btn btn-sm btn-secondary btn-answer svelte-8w7att");
 		},
 		m(target, anchor) {
 			insert(target, button, anchor);
@@ -137,55 +135,39 @@ function create_if_block_2(ctx) {
 
 // (98:28) {:else}
 function create_else_block(ctx) {
-	let svg;
-	let use;
+	let t;
 
 	return {
 		c() {
-			svg = svg_element("svg");
-			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video");
-			attr(svg, "class", "bi text-success");
-			attr(svg, "width", "32");
-			attr(svg, "height", "32");
-			attr(svg, "fill", "currentColor");
+			t = text("Включить видео");
 		},
 		m(target, anchor) {
-			insert(target, svg, anchor);
-			append(svg, use);
+			insert(target, t, anchor);
 		},
 		d(detaching) {
-			if (detaching) detach(svg);
+			if (detaching) detach(t);
 		}
 	};
 }
 
-// (94:28) {#if user.mediaConnection.open}
+// (96:28) {#if user.mediaConnection.open}
 function create_if_block_3(ctx) {
-	let svg;
-	let use;
+	let t;
 
 	return {
 		c() {
-			svg = svg_element("svg");
-			use = svg_element("use");
-			xlink_attr(use, "xlink:href", "/dist/images/bootstrap-icons.svg#camera-video-off");
-			attr(svg, "class", "bi text-danger");
-			attr(svg, "width", "32");
-			attr(svg, "height", "32");
-			attr(svg, "fill", "currentColor");
+			t = text("Выключить видео");
 		},
 		m(target, anchor) {
-			insert(target, svg, anchor);
-			append(svg, use);
+			insert(target, t, anchor);
 		},
 		d(detaching) {
-			if (detaching) detach(svg);
+			if (detaching) detach(t);
 		}
 	};
 }
 
-// (111:16) {#if user.mediaConnection}
+// (109:16) {#if user.mediaConnection}
 function create_if_block(ctx) {
 	let div2;
 	let div0;
@@ -345,7 +327,7 @@ function create_fragment(ctx) {
 			attr(div2, "class", "card-body");
 			attr(div3, "class", "col-md-2");
 			attr(div4, "class", "row no-gutters");
-			attr(div5, "class", "user card bg-light shadow-sm mb-3 svelte-li6vj2");
+			attr(div5, "class", "user card bg-light shadow-sm mb-3 svelte-8w7att");
 		},
 		m(target, anchor) {
 			insert(target, div5, anchor);

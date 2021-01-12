@@ -379,7 +379,7 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
-	const peer = new Peer("admin", settings.callOptions);
+	const peer = new Peer(settings.adminID, settings.callOptions);
 	let isPeerReady = false;
 	let isQuestionActive = false;
 	let users = [];

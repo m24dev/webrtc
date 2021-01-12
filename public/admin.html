@@ -14,5 +14,28 @@
         <div id="app"></div>
     </div>
     <script type="module" src="./dist/js/admin.js"></script>
+
+    <!-- <script src="/calls/frontend/web/assets/76283ef7/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha512-59oxERSDGj1eMzmFW3acSaBHEMNi2GaeQC7nQYcTqM0vgcnavi4BpUhLkcJQE2G6fdtn8JVj7brt0EZuBV0ogQ==" crossorigin="anonymous"></script>
+
+<script>
+
+var socket = io('wss://blog-kopilka.ru');
+    socket.on('connect', function(){});
+
+socket.on('new message', function (msg) {
+      if(msg.to == 'adm' || msg.action == 'resolve') {
+        $.get('https://cross.m24.ru/calls/frontend/web/index.php?r=callers/resolve&id=1', function( data ) {
+        if (data.success == true) {
+          socket.emit('new message', JSON.stringify(data));
+        } 
+    
+  });
+      }
+      if(msg.to == 'adm' || msg.action == 'terminate') {
+        window.location.href = "https://cross.m24.ru/calls/frontend/web/index.php?r=callers%2Fterminate";
+      }
+  });
+</script> -->
 </body>
 </html>

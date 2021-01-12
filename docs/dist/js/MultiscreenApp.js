@@ -392,7 +392,7 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
-	const peer = new Peer("multiscreen", settings.callOptions);
+	const peer = new Peer(settings.multiscreenID, settings.callOptions);
 	let isPeerReady = false;
 	let users = [];
 

@@ -488,8 +488,6 @@ function create_fragment(ctx) {
 	};
 }
 
-const adminID = "admin";
-const multiscreenID = "multiscreen";
 let isDisconnected = false;
 
 function setMediaConnectionCallbacks(conn) {
@@ -500,6 +498,8 @@ function setMediaConnectionCallbacks(conn) {
 
 function instance($$self, $$props, $$invalidate) {
 	const query = new URLSearchParams(location.search);
+	const adminID = settings.adminID;
+	const multiscreenID = settings.multiscreenID;
 	let peer;
 	let isLoading = false;
 	let isPeerReady = false;

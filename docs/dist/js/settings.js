@@ -3,7 +3,6 @@ export default {
         host: '186528f25664.ngrok.io',
         port: 443,
         path: '/myapp',
-        // debug: 3,
         config: {
             iceServers: [
                 {
@@ -18,5 +17,7 @@ export default {
                 }
             ]
         }
-    }
+    },
+    adminID: 'admin',
+    multiscreenID: 'multiscreen'
 };

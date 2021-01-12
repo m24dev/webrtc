@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import AdminUser from './AdminUser.svelte';
 
-    const peer = new Peer('admin', settings.callOptions);
+    const peer = new Peer(settings.adminID, settings.callOptions);
 
     let isPeerReady = false;
     let isQuestionActive = false;

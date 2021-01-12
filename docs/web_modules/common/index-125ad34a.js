@@ -75,9 +75,6 @@ function destroy_each(iterations, detaching) {
 function element(name) {
     return document.createElement(name);
 }
-function svg_element(name) {
-    return document.createElementNS('http://www.w3.org/2000/svg', name);
-}
 function text(data) {
     return document.createTextNode(data);
 }
@@ -96,9 +93,6 @@ function attr(node, attribute, value) {
         node.removeAttribute(attribute);
     else if (node.getAttribute(attribute) !== value)
         node.setAttribute(attribute, value);
-}
-function xlink_attr(node, attribute, value) {
-    node.setAttributeNS('http://www.w3.org/1999/xlink', attribute, value);
 }
 function children(element) {
     return Array.from(element.childNodes);
@@ -609,4 +603,4 @@ class SvelteComponent {
     }
 }
 
-export { run_all as A, set_data as B, svg_element as C, xlink_attr as D, binding_callbacks as E, create_bidirectional_transition as F, toggle_class as G, identity as H, SvelteComponent as S, append as a, attr as b, createEventDispatcher as c, check_outros as d, create_component as e, destroy_component as f, destroy_each as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, listen as n, onMount as o, mount_component as p, noop as q, space as r, safe_not_equal as s, text as t, transition_in as u, transition_out as v, action_destroyer as w, add_render_callback as x, create_in_transition as y, is_function as z };
+export { run_all as A, set_data as B, binding_callbacks as C, create_bidirectional_transition as D, toggle_class as E, identity as F, SvelteComponent as S, append as a, attr as b, createEventDispatcher as c, check_outros as d, create_component as e, destroy_component as f, destroy_each as g, detach as h, element as i, empty as j, group_outros as k, init as l, insert as m, listen as n, onMount as o, mount_component as p, noop as q, space as r, safe_not_equal as s, text as t, transition_in as u, transition_out as v, action_destroyer as w, add_render_callback as x, create_in_transition as y, is_function as z };
